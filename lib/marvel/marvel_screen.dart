@@ -13,25 +13,31 @@ class _MarvelScreenState extends State<MarvelScreen> {
   final ScrollController _scrollController = ScrollController();
   final List<MarvelCharacter> _marvelCharacters = List<MarvelCharacter>();
   int _lastPageLoaded = 0;
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
 
-    _asyncInit();
+    _loadPage();
 
     _scrollController.addListener(() async {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-        _asyncInit();
+        _loadPage();
       }
     });
   }
 
-  Future<void> _asyncInit() async {
-    if (_lastPageLoaded > 0) _loadingIndication(context);
-    _marvelCharacters.addAll(await ApiService().getMarvelCharacters(_lastPageLoaded));
-    if (_lastPageLoaded > 0) Navigator.of(context).pop();
-    setState(() => _lastPageLoaded++);
+  Future<void> _loadPage() async {
+    if (_isLoading == false) {
+      _isLoading = true;
+      if (_lastPageLoaded > 0) _loadingIndication(context);
+      _marvelCharacters.addAll(await ApiService().getMarvelCharacters(_lastPageLoaded));
+      if (_lastPageLoaded > 0) Navigator.of(context).pop();
+      _lastPageLoaded++;
+      _isLoading = false;
+      setState(() {});
+    }
   }
 
   @override
