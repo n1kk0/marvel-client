@@ -46,33 +46,75 @@ class _MarvelScreenState extends State<MarvelScreen> {
       appBar: AppBar(
         title: Text("Marvel Characters"),
       ),
-      body: ListView.builder(
-        itemCount: _marvelCharacters.length,
-        controller: _scrollController,
-        itemBuilder: (BuildContext context, int index) {
-          return ListTile(
-            contentPadding: EdgeInsets.all(5),
-            leading: Hero(
-              tag: "kirbyrulez$index",
-              child: CircleAvatar(
-                radius: 30.0,
-                backgroundImage: NetworkImage(_marvelCharacters[index].thumbnail),
-                backgroundColor: Colors.transparent,
-              )
-            ),
-            title: Text(_marvelCharacters[index].name),
-            onTap: () async {
-              await Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) => MarvelHeroScreen(
-                  _marvelCharacters[index].thumbnail,
-                  _marvelCharacters[index].name,
-                  "kirbyrulez$index",
+      body: MediaQuery.of(context).size.width < 600 ?
+        ListView.builder(
+          itemCount: _marvelCharacters.length,
+          controller: _scrollController,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              contentPadding: EdgeInsets.all(5),
+              leading: Hero(
+                tag: "kirbyrulez$index",
+                child: CircleAvatar(
+                  radius: 30.0,
+                  backgroundImage: NetworkImage(_marvelCharacters[index].thumbnail),
+                  backgroundColor: Colors.transparent,
+                )
+              ),
+              title: Text(_marvelCharacters[index].name),
+              onTap: () async {
+                await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => MarvelHeroScreen(
+                    _marvelCharacters[index].thumbnail,
+                    _marvelCharacters[index].name,
+                    "kirbyrulez$index",
+                  ),
+                ));
+              },
+            );
+          },
+        ) :
+        GridView.count(
+          controller: _scrollController,
+          crossAxisCount: 3,
+          padding: EdgeInsets.all(36.0),
+          mainAxisSpacing: 36.0,
+          crossAxisSpacing: 36.0,
+          children: _marvelCharacters.map((MarvelCharacter marvelcharacter) {
+            return GestureDetector(
+              child: Container(
+                constraints: BoxConstraints(
+                  maxHeight: 200,
+                  maxWidth: 200,
                 ),
-              ));
-            },
-          );
-        },
-      ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Hero(
+                      tag: "kirbyrulez${marvelcharacter.hashCode}",
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(marvelcharacter.thumbnail),
+                        backgroundColor: Colors.transparent,
+                        radius: 80,
+                      )
+                    ),
+                    Text(marvelcharacter.name),
+                  ],
+                ),
+              ),
+              onTap: () async {
+                await Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => MarvelHeroScreen(
+                    marvelcharacter.thumbnail,
+                    marvelcharacter.name,
+                    "kirbyrulez${marvelcharacter.hashCode}",
+                  ),
+                ));
+              },
+            );
+          }).toList(),
+        )
+      ,
     );
   }
 
@@ -91,8 +133,8 @@ class _MarvelScreenState extends State<MarvelScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   CircularProgressIndicator(),
-                  Text("Chargement"),
-                  Text("Page ${_lastPageLoaded + 1}"),
+                  Text("Chargement", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  Text("Page ${_lastPageLoaded + 1}", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 ],
               ),
             )
