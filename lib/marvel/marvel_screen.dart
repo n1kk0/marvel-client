@@ -86,7 +86,15 @@ class _MarvelScreenState extends State<MarvelScreen> {
           backgroundColor: Colors.transparent,
           children: <Widget>[
             Center(
-              child: CircularProgressIndicator(),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  CircularProgressIndicator(),
+                  Text("Chargement"),
+                  Text("Page ${_lastPageLoaded + 1}"),
+                ],
+              ),
             )
           ],
         );
