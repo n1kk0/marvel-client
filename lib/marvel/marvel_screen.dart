@@ -84,8 +84,8 @@ class _MarvelScreenState extends State<MarvelScreen> {
             return GestureDetector(
               child: Container(
                 constraints: BoxConstraints(
-                  maxHeight: 200,
-                  maxWidth: 200,
+                  maxHeight: MediaQuery.of(context).size.width / 5,
+                  maxWidth: MediaQuery.of(context).size.width / 5,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -95,10 +95,10 @@ class _MarvelScreenState extends State<MarvelScreen> {
                       child: CircleAvatar(
                         backgroundImage: NetworkImage(marvelcharacter.thumbnail),
                         backgroundColor: Colors.transparent,
-                        radius: 80,
+                        radius: MediaQuery.of(context).size.width / 10,
                       )
                     ),
-                    Text(marvelcharacter.name),
+                    Text(marvelcharacter.name, style: TextStyle(fontSize: MediaQuery.of(context).size.width / 40, fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
