@@ -1,0 +1,57 @@
+services:
+- docker:dind
+
+cache:
+  untracked: true
+  key: "$CI_BUILD_REF_NAME"
+  paths:
+    - .pub_cache/
+
+stages:
+  - buildsource
+  - buildcontainer
+  - deploy
+
+build-source:
+  stage: buildsource
+  image: cirrusci/flutter:dev-web
+  before_script:
+    - flutter config --enable-web
+    - sudo chown -R cirrus:cirrus ./
+    - flutter pub get
+  script:
+    - flutter build web
+  artifacts:
+    name: "web"
+    paths:
+      - build
+    expire_in: 2 days
+  only:
+    - master
+
+build-container:
+  stage: buildcontainer
+  dependencies:
+    - build-source
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.techmeup.io
+  script:
+    - docker build --pull -t registry.techmeup.io/travelcar/web:latest -f container/Dockerfile .
+    - docker push registry.techmeup.io/travelcar/web:latest
+  only:
+    - master
+
+deploy:
+  stage: deploy
+  image: cdrx/rancher-gitlab-deploy
+  environment:
+    name: Production
+  before_script:
+    - apk update && apk upgrade && apk add --no-cache curl
+  script:
+    - upgrade --rancher-url $RANCHER_URL --rancher-key $RANCHER_ACCESS_KEY --rancher-secret $RANCHER_SECRET_KEY --environment $RANCHER_ENV --stack travelcar --service web --new-image registry.techmeup.io/travelcar/web:latest --create --wait-for-upgrade-to-finish --no-finish-upgrade
+  after_script:
+    - curl -X POST -H "Content-type:\ application/json" --data "{\"text\":\"Deploy TravelCar web $CI_COMMIT_TITLE $CI_PROJECT_URL/commit/$CI_COMMIT_SHA\"}" https://hooks.slack.com/services/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
+  when: manual
+  only:
+    - master
