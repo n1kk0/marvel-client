@@ -7,6 +7,22 @@ class MarvelHeroScreen extends StatelessWidget {
 
   MarvelHeroScreen(this._thumbnail, this._name, this._tag, {Key key}) : super(key: key);
 
+  Size screenSize(BuildContext context) {
+    return MediaQuery.of(context).size;
+  }
+
+  double screenHeight(BuildContext context, {double dividedBy = 1, double reducedBy = 0.0}) {
+    return (screenSize(context).height - reducedBy) / dividedBy;
+  }
+
+  double screenWidth(BuildContext context, {double dividedBy = 1, double reducedBy = 0.0}) {
+    return (screenSize(context).width - reducedBy) / dividedBy;
+  }
+
+  double screenHeightExcludingToolbar(BuildContext context, {double dividedBy = 1}) {
+    return screenHeight(context, dividedBy: dividedBy, reducedBy: kToolbarHeight);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +35,7 @@ class MarvelHeroScreen extends StatelessWidget {
               Hero(
                 tag: _tag,
                 child: CircleAvatar(
-                  radius: MediaQuery.of(context).size.width / 2.3,
+                  radius: screenWidth(context, dividedBy: 2.3) > screenHeightExcludingToolbar(context, dividedBy: 2.3) ? screenHeightExcludingToolbar(context, dividedBy: 2.3) : screenWidth(context, dividedBy: 2.3),
                   backgroundImage: NetworkImage(_thumbnail),
                   backgroundColor: Colors.transparent,
                 )
