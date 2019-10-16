@@ -14,6 +14,7 @@ class _MarvelScreenState extends State<MarvelScreen> {
   final List<MarvelCharacter> _marvelCharacters = List<MarvelCharacter>();
   int _lastPageLoaded = 0;
   bool _isLoading = false;
+  bool _endReached = false;
 
   @override
   void initState() {
@@ -27,10 +28,19 @@ class _MarvelScreenState extends State<MarvelScreen> {
   }
 
   Future<void> _loadPage() async {
-    if (_isLoading == false) {
+    if (!_isLoading && !_endReached) {
       _isLoading = true;
       _loadingIndication(context);
-      _marvelCharacters.addAll(await ApiService().getMarvelCharacters(_lastPageLoaded));
+
+      final List<MarvelCharacter> loadedMarvelCharacters = await ApiService().getMarvelCharacters(_lastPageLoaded);
+
+      if (loadedMarvelCharacters.isEmpty) {
+        _marvelCharacters.add(MarvelCharacter(name: "You Reached The End"));
+        _endReached = true;
+      } else {
+        _marvelCharacters.addAll(loadedMarvelCharacters);
+      }
+
       Navigator.of(context).pop();
       _lastPageLoaded++;
       _isLoading = false;
