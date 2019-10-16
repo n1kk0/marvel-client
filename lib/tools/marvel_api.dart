@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart';
+
 import 'package:marvel_client/models/marvel_character.dart';
 
 class ApiService {
