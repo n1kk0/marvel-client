@@ -38,6 +38,7 @@ class _SearchSeriesAppBarState extends State<SearchSeriesAppBar>{
           textFieldConfiguration: TextFieldConfiguration(
             controller: widget.seriesTypeAheadController,
             style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+            autofocus: true,
             cursorColor: Colors.white,
             decoration: InputDecoration(
               labelText: 'Search by Comic Series',
