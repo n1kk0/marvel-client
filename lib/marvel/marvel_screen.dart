@@ -35,7 +35,11 @@ class _MarvelScreenState extends State<MarvelScreen> {
       final List<MarvelCharacter> loadedMarvelCharacters = await ApiService().getMarvelCharacters(_lastPageLoaded);
 
       if (loadedMarvelCharacters.isEmpty) {
-        _marvelCharacters.add(MarvelCharacter(name: "You Reached The End"));
+        _marvelCharacters.add(MarvelCharacter(
+          name: "You Reached The End",
+          thumbnail: "https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/StoryArc/1542/1542._SX400_QL80_TTD_.jpg",
+        ));
+
         _endReached = true;
       } else {
         _marvelCharacters.addAll(loadedMarvelCharacters);
