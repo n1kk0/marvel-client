@@ -13,6 +13,7 @@ dependencies:
   rxdart:
   http:
   crypto:
+  flutter_typeahead: ^1.6.1
 
 dev_dependencies:
   flutter_test:

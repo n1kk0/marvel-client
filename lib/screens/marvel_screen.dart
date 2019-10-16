@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:marvel_client/models/marvel_character.dart';
+import 'package:marvel_client/models/marvel_series.dart';
 import 'package:marvel_client/tools/marvel_api.dart';
 
 import 'package:marvel_client/views/one_col_view.dart';
 import 'package:marvel_client/views/three_cols_view.dart';
+import 'package:marvel_client/widgets/search_series_appbar.dart';
 
 class MarvelScreen extends StatefulWidget {
   MarvelScreen({Key key}) : super(key: key);
@@ -15,9 +17,12 @@ class MarvelScreen extends StatefulWidget {
 class _MarvelScreenState extends State<MarvelScreen> {
   final ScrollController _scrollController = ScrollController();
   final List<MarvelCharacter> _marvelCharacters = List<MarvelCharacter>();
+  final TextEditingController _seriesTypeAheadController = TextEditingController();
+  int _comicSeriesFilterId;
   int _lastPageLoaded = 0;
   bool _isLoading = false;
   bool _endReached = false;
+  bool _searchFilterActive = false;
 
   @override
   void initState() {
@@ -41,19 +46,42 @@ class _MarvelScreenState extends State<MarvelScreen> {
     if (_lastPageLoaded == 0) Future.delayed(Duration(milliseconds: 10), _loadPage);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Marvel Characters"),
+      appBar: SearchSeriesAppBar(
+        seriesTypeAheadController: _seriesTypeAheadController,
+        searchFilterActive: _searchFilterActive,
+        openSeriesSearch: () {
+          _searchFilterActive = !_searchFilterActive;
+
+          if (!_searchFilterActive) {
+            _seriesTypeAheadController.text = "";
+            _comicSeriesFilterId = null;
+            _loadPage(true);
+          }
+
+          setState(() {});
+        },
+        onSuggestionSelected: (MarvelSeries marvelSeries) {
+          _seriesTypeAheadController.text = marvelSeries.title;
+          _comicSeriesFilterId = marvelSeries.id;
+          _loadPage(true);
+        },
       ),
       body: MediaQuery.of(context).size.width < 600 ? OneColView(_marvelCharacters, _scrollController) : ThreeColsView(_marvelCharacters, _scrollController),
     );
   }
 
-  Future<void> _loadPage() async {
+  Future<void> _loadPage([bool reset = false]) async {
+    if(reset) {
+      _endReached = false;
+      _marvelCharacters.clear();
+      _lastPageLoaded = 0;
+    }
+
     if (!_isLoading && !_endReached) {
       _isLoading = true;
       _loadingIndication(context);
 
-      final List<MarvelCharacter> loadedMarvelCharacters = await ApiService().getMarvelCharacters(_lastPageLoaded);
+      final List<MarvelCharacter> loadedMarvelCharacters = await ApiService().getMarvelCharacters(_lastPageLoaded, _comicSeriesFilterId);
 
       if (loadedMarvelCharacters.isEmpty) {
         _marvelCharacters.add(MarvelCharacter(
