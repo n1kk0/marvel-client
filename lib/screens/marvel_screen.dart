@@ -38,7 +38,7 @@ class _MarvelScreenState extends State<MarvelScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_lastPageLoaded == 0) Future.delayed(Duration(seconds: 1), _loadPage);
+    if (_lastPageLoaded == 0) Future.delayed(Duration(milliseconds: 10), _loadPage);
 
     return Scaffold(
       appBar: AppBar(
