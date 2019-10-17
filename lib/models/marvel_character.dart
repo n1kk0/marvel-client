@@ -7,7 +7,7 @@ class MarvelCharacter {
   factory MarvelCharacter.fromJson(Map<String, dynamic> json) {
     return MarvelCharacter(
       name: json["name"],
-      thumbnail: "${json["thumbnail"]["path"]}.${json["thumbnail"]["extension"]}",
+      thumbnail: json["thumbnail"],
     );
   }
 

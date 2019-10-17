@@ -9,7 +9,7 @@ class MarvelSeries {
     return MarvelSeries(
       id: int.parse(json["id"].toString()),
       title: json["title"],
-      thumbnail: "${json["thumbnail"]["path"]}.${json["thumbnail"]["extension"]}",
+      thumbnail: json["thumbnail"],
     );
   }
 

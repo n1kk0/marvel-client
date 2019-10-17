@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:marvel_client/models/marvel_series.dart';
+
+import 'package:marvel_client/tools/app_config.dart';
 import 'package:marvel_client/tools/marvel_api.dart';
+import 'package:marvel_client/models/marvel_series.dart';
 
 class SearchSeriesAppBar extends StatefulWidget implements PreferredSizeWidget {
   final bool searchFilterActive;
@@ -49,7 +51,7 @@ class _SearchSeriesAppBarState extends State<SearchSeriesAppBar>{
               labelStyle: TextStyle(color: Theme.of(context).primaryTextTheme.body1.color),
             ),
           ),
-          suggestionsCallback: (pattern) async => pattern != "" ? await ApiService().getMarvelSeries(pattern) : [],
+          suggestionsCallback: (pattern) async => pattern != "" ? await ApiService(AppConfig.of(context).apiBaseUrl).getMarvelSeries(pattern) : [],
           itemBuilder: (BuildContext context, MarvelSeries marvelSeries) {
             return ListTile(
               leading: Container(

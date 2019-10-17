@@ -17,6 +17,7 @@ build-source:
   image: cirrusci/flutter:dev-web
   before_script:
     - flutter config --enable-web
+    - mv lib/main_prod.dart lib/main.dart
     - sudo chown -R cirrus:cirrus ./
     - flutter pub get
   script:
@@ -51,7 +52,7 @@ deploy:
   script:
     - upgrade --rancher-url $RANCHER_URL --rancher-key $RANCHER_ACCESS_KEY --rancher-secret $RANCHER_SECRET_KEY --environment $RANCHER_ENV --stack travelcar --service web --new-image registry.techmeup.io/travelcar/marvel_client:latest --create --wait-for-upgrade-to-finish --no-finish-upgrade
   after_script:
-    - curl -X POST -H "Content-type:\ application/json" --data "{\"text\":\"Deploy TravelCar web $CI_COMMIT_TITLE $CI_PROJECT_URL/commit/$CI_COMMIT_SHA\"}" https://hooks.slack.com/services/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
+    - curl -X POST -H "Content-type:\ application/json" --data "{\"text\":\"Deploy TravelCar web $CI_COMMIT_TITLE $CI_PROJECT_URL/commit/$CI_COMMIT_SHA\"}" $SLACK_HOOK
   when: manual
   only:
     - master

@@ -8,23 +8,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:marvel_client/main.dart';
+import 'package:marvel_client/my_material_app.dart';
+import 'package:marvel_client/tools/app_config.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
+    await tester.pumpWidget(AppConfig(
+      apiBaseUrl: 'https://proxy.marvel.techmeup.io',
+      child: MyMaterialApp(),
+    ));
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    expect(find.text('Marvel Characters'), findsOneWidget);
+    expect(find.text('DC Client'), findsNothing);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    await tester.tap(find.byIcon(Icons.search));
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text('Search by Comic Series Title'), findsNothing);
+    expect(find.text(''), findsOneWidget);
   });
 }

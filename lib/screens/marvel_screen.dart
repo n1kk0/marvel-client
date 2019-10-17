@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'package:marvel_client/tools/app_config.dart';
 import 'package:marvel_client/models/marvel_character.dart';
 import 'package:marvel_client/models/marvel_series.dart';
 import 'package:marvel_client/tools/marvel_api.dart';
-
 import 'package:marvel_client/views/one_col_view.dart';
 import 'package:marvel_client/views/three_cols_view.dart';
 import 'package:marvel_client/widgets/search_series_appbar.dart';
@@ -83,7 +83,7 @@ class _MarvelScreenState extends State<MarvelScreen> {
       _isLoading = true;
       _loadingIndication(context);
 
-      final List<MarvelCharacter> loadedMarvelCharacters = await ApiService().getMarvelCharacters(_lastPageLoaded, _marvelSeriesFilterId, (int count) => _marvelCharactersQuantity = count);
+      final List<MarvelCharacter> loadedMarvelCharacters = await ApiService(AppConfig.of(context).apiBaseUrl).getMarvelCharacters(_lastPageLoaded, _marvelSeriesFilterId, (int count) => _marvelCharactersQuantity = count);
 
       if (loadedMarvelCharacters.isEmpty) {
         _marvelCharacters.add(MarvelCharacter(

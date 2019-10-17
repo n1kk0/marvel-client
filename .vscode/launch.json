@@ -5,7 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Marvel Client",
+            "name": "Marvel Client Dev",
+            "program": "lib/main_dev.dart",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "Marvel Client Prod",
+            "program": "lib/main_prod.dart",
             "request": "launch",
             "type": "dart"
         }
