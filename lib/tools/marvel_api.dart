@@ -8,6 +8,7 @@ import 'package:marvel_client/models/marvel_series.dart';
 
 class ApiService {
   final String _baseUrl;
+  static Map<String, dynamic> _cache = Map<String, dynamic>();
 
   ApiService(this._baseUrl);
 
@@ -30,11 +31,18 @@ class ApiService {
   }
 
   Future<Response> _apiCall(String verb, String url, [String body]) async {
-    print("REQUEST URL:$url");
+    Response response;
 
-    final Response response =  await get("$url");
-
-    print("RESPONSE STATUS_CODE:${response.statusCode} BODY:${response.body}");
+    if (_cache[url] == null) {
+      print("REQUEST URL:$url");
+      response =  await get("$url");
+      _cache[url] = response;
+      print("RESPONSE STATUS_CODE:${response.statusCode} BODY:${response.body}");
+    } else {
+      print("RETREIVE CACHED URL:$url");
+      response = _cache[url];
+      print("CACHE STATUS_CODE:${response.statusCode} BODY:${response.body}");
+    }
 
     return response;
   }
