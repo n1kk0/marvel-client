@@ -12,7 +12,7 @@ class ApiService {
   ApiService(this._baseUrl);
 
   Future<List<MarvelCharacter>> getMarvelCharacters(int page, int comicSeriesFilterId, Function setTotalCount) async {
-    final Response response = await _apiCall("get", "$_baseUrl/characters?p=${page * 15}&${comicSeriesFilterId == null ? "" : "csfi="}$comicSeriesFilterId");
+    final Response response = await _apiCall("get", "$_baseUrl/characters?p=$page&${comicSeriesFilterId == null ? "" : "csfi="}$comicSeriesFilterId");
 
     setTotalCount(int.parse(jsonDecode(response.body)["count"].toString()));
 
