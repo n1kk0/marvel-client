@@ -12,8 +12,10 @@ class ApiService {
   final String _apiPublicKey = "3d1f66d37dfce525e7bc478de3b021e8";
   final String _apiPrivateKey = "f0ef5215d848fad0762c6ba8cce055a72e7ad6bf";
 
-  Future<List<MarvelCharacter>> getMarvelCharacters(int page, int comicSeriesFilterId) async {
+  Future<List<MarvelCharacter>> getMarvelCharacters(int page, int comicSeriesFilterId, Function setTotalCount) async {
     final Response response = await _apiCall("get", "$_baseUrl/v1/public/characters?orderBy=name&limit=15&offset=${page * 15}${comicSeriesFilterId == null ? "" : "&series="}$comicSeriesFilterId");
+
+    setTotalCount(int.parse(jsonDecode(response.body)["data"]["total"].toString()));
 
     return jsonDecode(response.body)["data"]["results"].map<MarvelCharacter>((character) {
       return MarvelCharacter.fromJson(character);

@@ -16,9 +16,10 @@ class MarvelScreen extends StatefulWidget {
 
 class _MarvelScreenState extends State<MarvelScreen> {
   final ScrollController _scrollController = ScrollController();
-  final List<MarvelCharacter> _marvelCharacters = List<MarvelCharacter>();
   final TextEditingController _seriesTypeAheadController = TextEditingController();
-  int _comicSeriesFilterId;
+  final List<MarvelCharacter> _marvelCharacters = List<MarvelCharacter>();
+  int _marvelCharactersQuantity;
+  int _marvelSeriesFilterId;
   int _lastPageLoaded = 0;
   bool _isLoading = false;
   bool _endReached = false;
@@ -47,6 +48,7 @@ class _MarvelScreenState extends State<MarvelScreen> {
 
     return Scaffold(
       appBar: SearchSeriesAppBar(
+        marvelCharactersQuantity: _marvelCharactersQuantity,
         seriesTypeAheadController: _seriesTypeAheadController,
         searchFilterActive: _searchFilterActive,
         openSeriesSearch: () {
@@ -54,7 +56,7 @@ class _MarvelScreenState extends State<MarvelScreen> {
 
           if (!_searchFilterActive) {
             _seriesTypeAheadController.text = "";
-            _comicSeriesFilterId = null;
+            _marvelSeriesFilterId = null;
             _loadPage(true);
           }
 
@@ -62,7 +64,7 @@ class _MarvelScreenState extends State<MarvelScreen> {
         },
         onSuggestionSelected: (MarvelSeries marvelSeries) {
           _seriesTypeAheadController.text = marvelSeries.title;
-          _comicSeriesFilterId = marvelSeries.id;
+          _marvelSeriesFilterId = marvelSeries.id;
           _loadPage(true);
         },
       ),
@@ -81,7 +83,7 @@ class _MarvelScreenState extends State<MarvelScreen> {
       _isLoading = true;
       _loadingIndication(context);
 
-      final List<MarvelCharacter> loadedMarvelCharacters = await ApiService().getMarvelCharacters(_lastPageLoaded, _comicSeriesFilterId);
+      final List<MarvelCharacter> loadedMarvelCharacters = await ApiService().getMarvelCharacters(_lastPageLoaded, _marvelSeriesFilterId, (int count) => _marvelCharactersQuantity = count);
 
       if (loadedMarvelCharacters.isEmpty) {
         _marvelCharacters.add(MarvelCharacter(
@@ -116,8 +118,15 @@ class _MarvelScreenState extends State<MarvelScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   CircularProgressIndicator(),
-                  Text("Chargement", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  Text("Loading", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   Text("Page ${_lastPageLoaded + 1}", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  _lastPageLoaded > 0 ? 
+                    Text(
+                        "(Characters ${_lastPageLoaded * 15} to ${(_lastPageLoaded +1) * 15 < _marvelCharactersQuantity ? (_lastPageLoaded +1) * 15 : _marvelCharactersQuantity} on $_marvelCharactersQuantity)",
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
+                      ) :
+                      Offstage()
+                    ,
                 ],
               ),
             )

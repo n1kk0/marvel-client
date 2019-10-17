@@ -8,8 +8,10 @@ class SearchSeriesAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Function openSeriesSearch;
   final Function onSuggestionSelected;
   final TextEditingController seriesTypeAheadController;
+  final int marvelCharactersQuantity;
 
   SearchSeriesAppBar({
+    this.marvelCharactersQuantity,
     this.searchFilterActive,
     this.seriesTypeAheadController,
     this.openSeriesSearch,
@@ -60,6 +62,9 @@ class _SearchSeriesAppBarState extends State<SearchSeriesAppBar>{
           onSuggestionSelected: widget.onSuggestionSelected,
         )
       ,
+      actions: <Widget>[
+        CircleAvatar(child: Text("Total\n${widget.marvelCharactersQuantity == null ? "" : widget.marvelCharactersQuantity}", style: TextStyle(fontSize: 9))),
+      ],
     );
   }
 }
