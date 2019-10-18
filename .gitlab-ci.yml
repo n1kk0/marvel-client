@@ -29,6 +29,8 @@ build-source:
     expire_in: 2 days
   only:
     - master
+  except:
+    - /^*skip CI*$/
 
 build-container:
   stage: buildcontainer
@@ -41,6 +43,8 @@ build-container:
     - docker push registry.techmeup.io/travelcar/marvel_client:latest
   only:
     - master
+  except:
+    - /^*skip CI*$/
 
 deploy:
   stage: deploy
@@ -53,6 +57,7 @@ deploy:
     - upgrade --rancher-url $RANCHER_URL --rancher-key $RANCHER_ACCESS_KEY --rancher-secret $RANCHER_SECRET_KEY --environment $RANCHER_ENV --stack travelcar --service web --new-image registry.techmeup.io/travelcar/marvel_client:latest --create --wait-for-upgrade-to-finish --no-finish-upgrade
   after_script:
     - curl -X POST -H "Content-type:\ application/json" --data "{\"text\":\"Deploy TravelCar web $CI_COMMIT_TITLE $CI_PROJECT_URL/commit/$CI_COMMIT_SHA\"}" $SLACK_HOOK
-  when: manual
   only:
     - master
+  except:
+    - /^*skip CI*$/
