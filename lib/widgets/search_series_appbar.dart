@@ -38,7 +38,7 @@ class _SearchSeriesAppBarState extends State<SearchSeriesAppBar>{
       ),
       title: !widget.searchFilterActive ?
         Text("Marvel Characters", style: TextStyle(fontWeight: FontWeight.bold)):
-        TypeAheadFormField<MarvelSeries>(
+        TypeAheadField<MarvelSeries>(
           textFieldConfiguration: TextFieldConfiguration(
             controller: widget.seriesTypeAheadController,
             style: TextStyle(color: Theme.of(context).primaryTextTheme.body1.color, fontSize: 16, fontWeight: FontWeight.bold),
@@ -65,7 +65,7 @@ class _SearchSeriesAppBarState extends State<SearchSeriesAppBar>{
         )
       ,
       actions: <Widget>[
-        CircleAvatar(child: Text("Total\n${widget.marvelCharactersQuantity == null ? "" : widget.marvelCharactersQuantity}", style: TextStyle(fontSize: 9))),
+        CircleAvatar(child: Text("Total\n${widget.marvelCharactersQuantity == null ? "" : widget.marvelCharactersQuantity}", style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold))),
       ],
     );
   }
