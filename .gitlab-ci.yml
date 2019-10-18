@@ -30,7 +30,8 @@ build-source:
   only:
     - master
   except:
-    - /^*skip CI*$/
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /^*skip CI*$/
 
 build-container:
   stage: buildcontainer
@@ -44,7 +45,8 @@ build-container:
   only:
     - master
   except:
-    - /^*skip CI*$/
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /^*skip CI*$/
 
 deploy:
   stage: deploy
@@ -60,4 +62,5 @@ deploy:
   only:
     - master
   except:
-    - /^*skip CI*$/
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /^*skip CI*$/
