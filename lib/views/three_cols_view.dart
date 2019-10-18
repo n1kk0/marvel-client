@@ -31,9 +31,9 @@ class ThreeColsView extends StatelessWidget {
                 Hero(
                   tag: "kirbyrulez${marvelcharacter.hashCode}",
                   child: CircleAvatar(
-                    backgroundImage: NetworkImage(marvelcharacter.thumbnail),
+                    backgroundImage: Image.network(marvelcharacter.thumbnail).image,
                     backgroundColor: Colors.transparent,
-                    radius: MediaQuery.of(context).size.width / 10,
+                    radius: MediaQuery.of(context).size.width / 10 - 2,
                   )
                 ),
                 Text(marvelcharacter.name, style: TextStyle(fontSize: MediaQuery.of(context).size.width / 40, fontWeight: FontWeight.bold)),

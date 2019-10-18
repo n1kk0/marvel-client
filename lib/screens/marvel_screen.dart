@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 import 'package:marvel_client/tools/app_config.dart';
 import 'package:marvel_client/models/marvel_character.dart';
@@ -9,7 +10,8 @@ import 'package:marvel_client/views/three_cols_view.dart';
 import 'package:marvel_client/widgets/search_series_appbar.dart';
 
 class MarvelScreen extends StatefulWidget {
-  MarvelScreen({Key key}) : super(key: key);
+  final Client _client;
+  MarvelScreen(this._client, {Key key}) : super(key: key);
 
   _MarvelScreenState createState() => _MarvelScreenState();
 }
@@ -67,6 +69,7 @@ class _MarvelScreenState extends State<MarvelScreen> {
           _marvelSeriesFilterId = marvelSeries.id;
           _loadPage(true);
         },
+        client: widget._client,
       ),
       body: MediaQuery.of(context).size.width < 600 ? OneColView(_marvelCharacters, _scrollController) : ThreeColsView(_marvelCharacters, _scrollController),
     );
@@ -83,7 +86,7 @@ class _MarvelScreenState extends State<MarvelScreen> {
       _isLoading = true;
       _loadingIndication(context);
 
-      final List<MarvelCharacter> loadedMarvelCharacters = await ApiService(AppConfig.of(context).apiBaseUrl).getMarvelCharacters(_lastPageLoaded, _marvelSeriesFilterId, (int count) => _marvelCharactersQuantity = count);
+      final List<MarvelCharacter> loadedMarvelCharacters = await ApiService(AppConfig.of(context).apiBaseUrl, widget._client).getMarvelCharacters(_lastPageLoaded, _marvelSeriesFilterId, (int count) => _marvelCharactersQuantity = count);
 
       if (loadedMarvelCharacters.isEmpty) {
         _marvelCharacters.add(MarvelCharacter(

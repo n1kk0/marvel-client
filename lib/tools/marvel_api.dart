@@ -8,9 +8,10 @@ import 'package:marvel_client/models/marvel_series.dart';
 
 class ApiService {
   final String _baseUrl;
+  final Client _client;
   static Map<String, dynamic> _cache = Map<String, dynamic>();
 
-  ApiService(this._baseUrl);
+  ApiService(this._baseUrl, this._client);
 
   Future<List<MarvelCharacter>> getMarvelCharacters(int page, int comicSeriesFilterId, Function setTotalCount) async {
     final Response response = await _apiCall("get", "$_baseUrl/characters?p=$page&${comicSeriesFilterId == null ? "" : "csfi="}$comicSeriesFilterId");
@@ -35,7 +36,7 @@ class ApiService {
 
     if (_cache[url] == null) {
       print("REQUEST URL:$url");
-      response =  await get("$url");
+      response =  await _client.get("$url");
       _cache[url] = response;
       print("RESPONSE STATUS_CODE:${response.statusCode} BODY:${response.body}");
     } else {

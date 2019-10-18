@@ -36,7 +36,7 @@ class MarvelHeroScreen extends StatelessWidget {
                 tag: _tag,
                 child: CircleAvatar(
                   radius: screenWidth(context, dividedBy: 2.3) > screenHeightExcludingToolbar(context, dividedBy: 2.3) ? screenHeightExcludingToolbar(context, dividedBy: 2.3) : screenWidth(context, dividedBy: 2.3),
-                  backgroundImage: NetworkImage(_thumbnail),
+                  backgroundImage: Image.network(_thumbnail).image,
                   backgroundColor: Colors.transparent,
                 )
               ),

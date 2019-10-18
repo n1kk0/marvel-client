@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 import 'package:marvel_client/screens/marvel_screen.dart';
 
 class MyMaterialApp extends StatelessWidget {
+  final Client _client;
+
+  MyMaterialApp(this._client);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -11,7 +16,7 @@ class MyMaterialApp extends StatelessWidget {
         primarySwatch: Colors.red,
         fontFamily: 'HelveticaNeue',
       ),
-      home: MarvelScreen(),
+      home: MarvelScreen(_client),
     );
   }
 }

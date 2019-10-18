@@ -22,7 +22,7 @@ class OneColView extends StatelessWidget {
             tag: "kirbyrulez$index",
             child: CircleAvatar(
               radius: 30.0,
-              backgroundImage: NetworkImage(_marvelCharacters[index].thumbnail),
+              backgroundImage: Image.network(_marvelCharacters[index].thumbnail).image,
               backgroundColor: Colors.transparent,
             )
           ),
