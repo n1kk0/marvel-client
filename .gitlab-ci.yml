@@ -29,9 +29,6 @@ build-source:
     expire_in: 2 days
   only:
     - master
-  except:
-    variables:
-      - $CI_COMMIT_MESSAGE =~ /^*skip CI*$/
 
 build-container:
   stage: buildcontainer
@@ -44,9 +41,6 @@ build-container:
     - docker push registry.techmeup.io/travelcar/marvel_client:latest
   only:
     - master
-  except:
-    variables:
-      - $CI_COMMIT_MESSAGE =~ /^*skip CI*$/
 
 deploy:
   stage: deploy
@@ -61,6 +55,3 @@ deploy:
     - curl -X POST -H "Content-type:\ application/json" --data "{\"text\":\"Deploy TravelCar web $CI_COMMIT_TITLE $CI_PROJECT_URL/commit/$CI_COMMIT_SHA\"}" $SLACK_HOOK
   only:
     - master
-  except:
-    variables:
-      - $CI_COMMIT_MESSAGE =~ /^*skip CI*$/
