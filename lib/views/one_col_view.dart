@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:marvel_client/models/marvel_character.dart';
 
 import 'package:marvel_client/screens/marvel_hero_screen.dart';
+import 'package:marvel_client/tools/app_config.dart';
 
 class OneColView extends StatelessWidget {
   final List<MarvelCharacter> _marvelCharacters;
@@ -22,7 +23,7 @@ class OneColView extends StatelessWidget {
             tag: "kirbyrulez$index",
             child: CircleAvatar(
               radius: 30.0,
-              backgroundImage: Image.network(_marvelCharacters[index].thumbnail).image,
+              backgroundImage: Image.network("${AppConfig.of(context).apiBaseUrl}/images?uri=${_marvelCharacters[index].thumbnail}").image,
               backgroundColor: Colors.transparent,
             )
           ),

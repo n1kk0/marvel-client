@@ -59,7 +59,7 @@ class _SearchSeriesAppBarState extends State<SearchSeriesAppBar>{
             return ListTile(
               leading: Container(
                 padding: EdgeInsets.all(5.0),
-                child: Image.network(marvelSeries.thumbnail, height: 48, width: 48),
+                child: Image.network("${AppConfig.of(context).apiBaseUrl}/images?uri=${marvelSeries.thumbnail}", height: 48, width: 48),
               ),
               title: Text(marvelSeries.title),
             );

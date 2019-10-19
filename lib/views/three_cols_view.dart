@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:marvel_client/models/marvel_character.dart';
 
 import 'package:marvel_client/screens/marvel_hero_screen.dart';
+import 'package:marvel_client/tools/app_config.dart';
 
 class ThreeColsView extends StatelessWidget {
   final List<MarvelCharacter> _marvelCharacters;
@@ -31,7 +32,7 @@ class ThreeColsView extends StatelessWidget {
                 Hero(
                   tag: "kirbyrulez${marvelcharacter.hashCode}",
                   child: CircleAvatar(
-                    backgroundImage: Image.network(marvelcharacter.thumbnail).image,
+                    backgroundImage: Image.network("${AppConfig.of(context).apiBaseUrl}/images?uri=${marvelcharacter.thumbnail}").image,
                     backgroundColor: Colors.transparent,
                     radius: MediaQuery.of(context).size.width / 10 - 2,
                   )

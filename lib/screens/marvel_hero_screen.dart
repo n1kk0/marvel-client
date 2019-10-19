@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:marvel_client/tools/app_config.dart';
 
 class MarvelHeroScreen extends StatelessWidget {
   final String _thumbnail;
@@ -36,7 +37,7 @@ class MarvelHeroScreen extends StatelessWidget {
                 tag: _tag,
                 child: CircleAvatar(
                   radius: screenWidth(context, dividedBy: 2.3) > screenHeightExcludingToolbar(context, dividedBy: 2.3) ? screenHeightExcludingToolbar(context, dividedBy: 2.3) : screenWidth(context, dividedBy: 2.3),
-                  backgroundImage: Image.network(_thumbnail).image,
+                  backgroundImage: Image.network("${AppConfig.of(context).apiBaseUrl}/images?uri=$_thumbnail").image,
                   backgroundColor: Colors.transparent,
                 )
               ),
