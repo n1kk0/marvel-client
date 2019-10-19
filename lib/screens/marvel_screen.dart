@@ -88,15 +88,15 @@ class _MarvelScreenState extends State<MarvelScreen> {
 
       final List<MarvelCharacter> loadedMarvelCharacters = await ApiService(AppConfig.of(context).apiBaseUrl, widget._client).getMarvelCharacters(_lastPageLoaded, _marvelSeriesFilterId, (int count) => _marvelCharactersQuantity = count);
 
-      if (loadedMarvelCharacters.isEmpty) {
+      _marvelCharacters.addAll(loadedMarvelCharacters);
+
+      if (_marvelCharacters.length == _marvelCharactersQuantity) {
         _marvelCharacters.add(MarvelCharacter(
           name: "You Reached The End",
           thumbnail: "https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/StoryArc/1542/1542._SX400_QL80_TTD_.jpg",
         ));
 
         _endReached = true;
-      } else {
-        _marvelCharacters.addAll(loadedMarvelCharacters);
       }
 
       Navigator.of(context).pop();
