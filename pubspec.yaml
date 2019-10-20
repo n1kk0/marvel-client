@@ -20,6 +20,12 @@ dev_dependencies:
     sdk: flutter
 
   image_test_utils: ^1.0.0
+  flutter_launcher_icons: "^0.7.3"
+  
+flutter_icons:
+  android: "launcher_icon" 
+  ios: true
+  image_path: "assets/icon/silver_surfer.gif"
 
 flutter:
   uses-material-design: true
