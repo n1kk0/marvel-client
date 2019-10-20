@@ -88,6 +88,16 @@ class _MarvelScreenState extends State<MarvelScreen> {
 
       final List<MarvelCharacter> loadedMarvelCharacters = await ApiService(AppConfig.of(context).apiBaseUrl, widget._client).getMarvelCharacters(_lastPageLoaded, _marvelSeriesFilterId, (int count) => _marvelCharactersQuantity = count);
 
+      loadedMarvelCharacters.forEach((MarvelCharacter marvelCharacter) {
+        final Image image = marvelCharacter.getImage("${AppConfig.of(context).apiBaseUrl}/images?uri=");
+
+        image.image.resolve(ImageConfiguration()).addListener(ImageStreamListener((_, __) {
+          setState(() {
+            marvelCharacter.loaded = true;
+          });
+        }));
+      });
+
       _marvelCharacters.addAll(loadedMarvelCharacters);
 
       if (_marvelCharacters.length == _marvelCharactersQuantity) {

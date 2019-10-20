@@ -1,6 +1,10 @@
+import 'package:flutter/material.dart';
+
 class MarvelCharacter {
-  String name;
-  String thumbnail;
+  final String name;
+  final String thumbnail;
+  Image image;
+  bool loaded = false;
 
   MarvelCharacter({this.name, this.thumbnail});
 
@@ -9,6 +13,10 @@ class MarvelCharacter {
       name: json["name"],
       thumbnail: json["thumbnail"],
     );
+  }
+
+  Image getImage(String urlPrefix) {
+    return Image.network("$urlPrefix$thumbnail");
   }
 
   @override

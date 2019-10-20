@@ -21,10 +21,14 @@ class OneColView extends StatelessWidget {
           contentPadding: EdgeInsets.all(5),
           leading: Hero(
             tag: "kirbyrulez$index",
-            child: CircleAvatar(
-              radius: 30.0,
+            child: _marvelCharacters[index].loaded ? CircleAvatar(
+              radius: 30,
               backgroundImage: Image.network("${AppConfig.of(context).apiBaseUrl}/images?uri=${_marvelCharacters[index].thumbnail}").image,
               backgroundColor: Colors.transparent,
+            ) : Container(
+              height: 60,
+              width: 60,
+              child: CircularProgressIndicator()
             )
           ),
           title: Text(_marvelCharacters[index].name),

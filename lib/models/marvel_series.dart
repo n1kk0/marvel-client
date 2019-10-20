@@ -1,7 +1,7 @@
 class MarvelSeries {
-  int id;
-  String title;
-  String thumbnail;
+  final int id;
+  final String title;
+  final String thumbnail;
 
   MarvelSeries({this.id, this.title, this.thumbnail});
 

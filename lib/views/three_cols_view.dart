@@ -31,11 +31,15 @@ class ThreeColsView extends StatelessWidget {
               children: <Widget>[
                 Hero(
                   tag: "kirbyrulez${marvelcharacter.hashCode}",
-                  child: CircleAvatar(
+                  child: marvelcharacter.loaded ? CircleAvatar(
                     backgroundImage: Image.network("${AppConfig.of(context).apiBaseUrl}/images?uri=${marvelcharacter.thumbnail}").image,
                     backgroundColor: Colors.transparent,
                     radius: MediaQuery.of(context).size.width / 10 - 2,
-                  )
+                  ) : Center(child: Container(
+                    height: MediaQuery.of(context).size.width / 5 - 4,
+                    width: MediaQuery.of(context).size.width / 5 - 4,
+                    child: CircularProgressIndicator()
+                  ))
                 ),
                 Text(marvelcharacter.name, style: TextStyle(fontSize: MediaQuery.of(context).size.width / 40, fontWeight: FontWeight.bold)),
               ],
