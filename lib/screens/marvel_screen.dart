@@ -89,23 +89,19 @@ class _MarvelScreenState extends State<MarvelScreen> {
       final List<MarvelCharacter> loadedMarvelCharacters = await ApiService(AppConfig.of(context).apiBaseUrl, widget._client).getMarvelCharacters(_lastPageLoaded, _marvelSeriesFilterId, (int count) => _marvelCharactersQuantity = count);
 
       loadedMarvelCharacters.forEach((MarvelCharacter marvelCharacter) {
-        final Image image = marvelCharacter.getImage("${AppConfig.of(context).apiBaseUrl}/images?uri=");
-
-        image.image.resolve(ImageConfiguration()).addListener(ImageStreamListener((_, __) {
-          setState(() {
-            marvelCharacter.loaded = true;
-          });
-        }));
+        _preloadImage(marvelCharacter);
       });
 
       _marvelCharacters.addAll(loadedMarvelCharacters);
 
       if (_marvelCharacters.length == _marvelCharactersQuantity) {
-        _marvelCharacters.add(MarvelCharacter(
+        final MarvelCharacter marvelCharacter = MarvelCharacter(
           name: "You Reached The End",
           thumbnail: "https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/StoryArc/1542/1542._SX400_QL80_TTD_.jpg",
-        ));
+        );
 
+        _preloadImage(marvelCharacter);
+        _marvelCharacters.add(marvelCharacter);
         _endReached = true;
       }
 
@@ -114,6 +110,16 @@ class _MarvelScreenState extends State<MarvelScreen> {
       _isLoading = false;
       setState(() {});
     }
+  }
+
+  Null _preloadImage(MarvelCharacter marvelCharacter) {
+    final Image image = marvelCharacter.getImage("${AppConfig.of(context).apiBaseUrl}/images?uri=");
+
+    image.image.resolve(ImageConfiguration()).addListener(ImageStreamListener((_, __) {
+      setState(() {
+        marvelCharacter.loaded = true;
+      });
+    }));
   }
 
   Future<Null> _loadingIndication(BuildContext context) async {
