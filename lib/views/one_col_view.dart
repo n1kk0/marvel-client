@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:marvel_client/models/marvel_character.dart';
 import 'package:provider/provider.dart';
 
 import 'package:marvel_client/providers/marvel_characters.dart';
@@ -12,17 +13,16 @@ class OneColView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: Provider.of<MarvelCharacters>(context).marvelCharactersQuantity,
+    return ListView(
       controller: _scrollController,
-      itemBuilder: (BuildContext context, int index) {
+      children: Provider.of<MarvelCharacters>(context).characters.map((MarvelCharacter marvelCharacter) {
         return ListTile(
           contentPadding: EdgeInsets.all(5),
           leading: Hero(
-            tag: "kirbyrulez$index",
-            child: Provider.of<MarvelCharacters>(context).characters[index].loaded ? CircleAvatar(
+            tag: "kirbyrulez${marvelCharacter.hashCode}",
+            child: marvelCharacter.loaded ? CircleAvatar(
               radius: 30,
-              backgroundImage: Image.network("$_apiBaseUrl/images?uri=${Provider.of<MarvelCharacters>(context).characters[index].thumbnail}").image,
+              backgroundImage: Image.network("$_apiBaseUrl/images?uri=${marvelCharacter.thumbnail}").image,
               backgroundColor: Colors.transparent,
             ) : Container(
               height: 60,
@@ -30,19 +30,19 @@ class OneColView extends StatelessWidget {
               child: CircularProgressIndicator()
             )
           ),
-          title: Text(Provider.of<MarvelCharacters>(context).characters[index].name),
+          title: Text(marvelCharacter.name),
           onTap: () async {
             await Navigator.of(context).push(MaterialPageRoute(
               builder: (BuildContext context) => MarvelHeroScreen(
                 _apiBaseUrl,
-                Provider.of<MarvelCharacters>(context).characters[index].thumbnail,
-                Provider.of<MarvelCharacters>(context).characters[index].name,
-                "kirbyrulez$index",
+                marvelCharacter.thumbnail,
+                marvelCharacter.name,
+                "kirbyrulez${marvelCharacter.hashCode}",
               ),
             ));
           },
         );
-      },
+      }).toList(),
     );
   }
 }
