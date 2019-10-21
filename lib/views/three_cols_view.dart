@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:marvel_client/models/marvel_character.dart';
-
+import 'package:marvel_client/providers/marvel_characters.dart';
 import 'package:marvel_client/screens/marvel_hero_screen.dart';
-import 'package:marvel_client/tools/app_config.dart';
 
 class ThreeColsView extends StatelessWidget {
-  final List<MarvelCharacter> _marvelCharacters;
   final ScrollController _scrollController;
+  final String _apiBaseUrl;
 
-  ThreeColsView(this._marvelCharacters, this._scrollController, {Key key}) : super(key: key);
+  ThreeColsView(this._scrollController, this._apiBaseUrl, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class ThreeColsView extends StatelessWidget {
       padding: EdgeInsets.all(36.0),
       mainAxisSpacing: 36.0,
       crossAxisSpacing: 36.0,
-      children: _marvelCharacters.map((MarvelCharacter marvelcharacter) {
+      children: Provider.of<MarvelCharacters>(context).characters.map((MarvelCharacter marvelcharacter) {
         return GestureDetector(
           child: Container(
             constraints: BoxConstraints(
@@ -32,7 +32,7 @@ class ThreeColsView extends StatelessWidget {
                 Hero(
                   tag: "kirbyrulez${marvelcharacter.hashCode}",
                   child: marvelcharacter.loaded ? CircleAvatar(
-                    backgroundImage: Image.network("${AppConfig.of(context).apiBaseUrl}/images?uri=${marvelcharacter.thumbnail}").image,
+                    backgroundImage: Image.network("$_apiBaseUrl/images?uri=${marvelcharacter.thumbnail}").image,
                     backgroundColor: Colors.transparent,
                     radius: MediaQuery.of(context).size.width / 10 - 2,
                   ) : Center(child: Container(
@@ -48,6 +48,7 @@ class ThreeColsView extends StatelessWidget {
           onTap: () async {
             await Navigator.of(context).push(MaterialPageRoute(
               builder: (BuildContext context) => MarvelHeroScreen(
+                _apiBaseUrl,
                 marvelcharacter.thumbnail,
                 marvelcharacter.name,
                 "kirbyrulez${marvelcharacter.hashCode}",

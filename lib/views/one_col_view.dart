@@ -1,29 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import 'package:marvel_client/models/marvel_character.dart';
-
+import 'package:marvel_client/providers/marvel_characters.dart';
 import 'package:marvel_client/screens/marvel_hero_screen.dart';
-import 'package:marvel_client/tools/app_config.dart';
 
 class OneColView extends StatelessWidget {
-  final List<MarvelCharacter> _marvelCharacters;
   final ScrollController _scrollController;
+  final String _apiBaseUrl;
 
-  OneColView(this._marvelCharacters, this._scrollController, {Key key}) : super(key: key);
+  OneColView(this._scrollController, this._apiBaseUrl, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: _marvelCharacters.length,
+      itemCount: Provider.of<MarvelCharacters>(context).marvelCharactersQuantity,
       controller: _scrollController,
       itemBuilder: (BuildContext context, int index) {
         return ListTile(
           contentPadding: EdgeInsets.all(5),
           leading: Hero(
             tag: "kirbyrulez$index",
-            child: _marvelCharacters[index].loaded ? CircleAvatar(
+            child: Provider.of<MarvelCharacters>(context).characters[index].loaded ? CircleAvatar(
               radius: 30,
-              backgroundImage: Image.network("${AppConfig.of(context).apiBaseUrl}/images?uri=${_marvelCharacters[index].thumbnail}").image,
+              backgroundImage: Image.network("$_apiBaseUrl}/images?uri=${Provider.of<MarvelCharacters>(context).characters[index].thumbnail}").image,
               backgroundColor: Colors.transparent,
             ) : Container(
               height: 60,
@@ -31,12 +30,13 @@ class OneColView extends StatelessWidget {
               child: CircularProgressIndicator()
             )
           ),
-          title: Text(_marvelCharacters[index].name),
+          title: Text(Provider.of<MarvelCharacters>(context).characters[index].name),
           onTap: () async {
             await Navigator.of(context).push(MaterialPageRoute(
               builder: (BuildContext context) => MarvelHeroScreen(
-                _marvelCharacters[index].thumbnail,
-                _marvelCharacters[index].name,
+                _apiBaseUrl,
+                Provider.of<MarvelCharacters>(context).characters[index].thumbnail,
+                Provider.of<MarvelCharacters>(context).characters[index].name,
                 "kirbyrulez$index",
               ),
             ));

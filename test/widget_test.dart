@@ -6,15 +6,13 @@ import 'package:http/http.dart';
 import 'package:http/testing.dart';
 import 'package:image_test_utils/image_test_utils.dart';
 
-import 'package:marvel_client/tools/app_config.dart';
 import 'package:marvel_client/my_material_app.dart';
 
 void main() {
   testWidgets('Marvel client UI init tests', (WidgetTester tester) async {
     provideMockedNetworkImages(() async {
-      await tester.pumpWidget(AppConfig(
-        apiBaseUrl: 'https://proxy.marvel.techmeup.io',
-        child: MyMaterialApp(MockClient((Request request) async {
+      await tester.pumpWidget(
+        MyMaterialApp(apiBaseUrl: 'https://proxy.marvel.techmeup.io', httpClient: MockClient((Request request) async {
           return Response(jsonEncode({
             "count": 1493,
             "characters": [
@@ -35,7 +33,7 @@ void main() {
               {"name": "Agent Zero", "thumbnail": "http://i.annihil.us/u/prod/marvel/i/mg/f/60/4c0042121d790.jpg"}
             ]
           }), 200);
-        })),
+        }),
       ));
 
       await tester.pump(Duration(seconds: 1));

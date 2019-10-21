@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:http/http.dart';
 
-import 'package:marvel_client/tools/app_config.dart';
 import 'package:marvel_client/tools/marvel_api.dart';
 import 'package:marvel_client/models/marvel_series.dart';
 
@@ -13,14 +12,16 @@ class SearchSeriesAppBar extends StatefulWidget implements PreferredSizeWidget {
   final TextEditingController seriesTypeAheadController;
   final int marvelCharactersQuantity;
   final Client client;
+  final String apiBaseUrl;
 
   SearchSeriesAppBar({
-    this.marvelCharactersQuantity,
-    this.searchFilterActive,
-    this.seriesTypeAheadController,
-    this.openSeriesSearch,
-    this.onSuggestionSelected,
-    this.client,
+    @required this.marvelCharactersQuantity,
+    @required this.searchFilterActive,
+    @required this.seriesTypeAheadController,
+    @required this.openSeriesSearch,
+    @required this.onSuggestionSelected,
+    @required this.client,
+    @required this.apiBaseUrl,
     Key key
   }) : preferredSize = Size.fromHeight(kToolbarHeight), super(key: key);
 
@@ -54,12 +55,12 @@ class _SearchSeriesAppBarState extends State<SearchSeriesAppBar>{
               labelStyle: TextStyle(color: Theme.of(context).primaryTextTheme.body1.color),
             ),
           ),
-          suggestionsCallback: (pattern) async => pattern != "" ? await ApiService(AppConfig.of(context).apiBaseUrl, widget.client).getMarvelSeries(pattern) : [],
+          suggestionsCallback: (pattern) async => pattern != "" ? await ApiService(widget.apiBaseUrl, widget.client).getMarvelSeries(pattern) : [],
           itemBuilder: (BuildContext context, MarvelSeries marvelSeries) {
             return ListTile(
               leading: Container(
                 padding: EdgeInsets.all(5.0),
-                child: Image.network("${AppConfig.of(context).apiBaseUrl}/images?uri=${marvelSeries.thumbnail}", height: 48, width: 48),
+                child: Image.network("${widget.apiBaseUrl}/images?uri=${marvelSeries.thumbnail}", height: 48, width: 48),
               ),
               title: Text(marvelSeries.title),
             );

@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-
-import 'package:marvel_client/tools/app_config.dart';
 import 'package:marvel_client/models/marvel_character.dart';
+import 'package:provider/provider.dart';
+
+import 'package:marvel_client/providers/marvel_characters.dart';
 import 'package:marvel_client/models/marvel_series.dart';
-import 'package:marvel_client/tools/marvel_api.dart';
 import 'package:marvel_client/views/one_col_view.dart';
 import 'package:marvel_client/views/three_cols_view.dart';
 import 'package:marvel_client/widgets/search_series_appbar.dart';
 
 class MarvelScreen extends StatefulWidget {
   final Client _client;
-  MarvelScreen(this._client, {Key key}) : super(key: key);
+  final String _apiBaseUrl;
+
+  MarvelScreen(this._client, this._apiBaseUrl, {Key key}) : super(key: key);
 
   _MarvelScreenState createState() => _MarvelScreenState();
 }
@@ -19,12 +21,6 @@ class MarvelScreen extends StatefulWidget {
 class _MarvelScreenState extends State<MarvelScreen> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _seriesTypeAheadController = TextEditingController();
-  final List<MarvelCharacter> _marvelCharacters = List<MarvelCharacter>();
-  int _marvelCharactersQuantity;
-  int _marvelSeriesFilterId;
-  int _lastPageLoaded = 0;
-  bool _isLoading = false;
-  bool _endReached = false;
   bool _searchFilterActive = false;
 
   @override
@@ -33,7 +29,7 @@ class _MarvelScreenState extends State<MarvelScreen> {
 
     _scrollController.addListener(() async {
       if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
-        _loadPage();
+        Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader);
       }
     });
   }
@@ -46,11 +42,11 @@ class _MarvelScreenState extends State<MarvelScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_lastPageLoaded == 0) Future.delayed(Duration(milliseconds: 10), _loadPage);
+    if (Provider.of<MarvelCharacters>(context, listen: false).lastPageLoaded  == 0) Future.delayed(Duration(milliseconds: 10), () => Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader));
 
     return Scaffold(
       appBar: SearchSeriesAppBar(
-        marvelCharactersQuantity: _marvelCharactersQuantity,
+        marvelCharactersQuantity: Provider.of<MarvelCharacters>(context).marvelCharactersQuantity,
         seriesTypeAheadController: _seriesTypeAheadController,
         searchFilterActive: _searchFilterActive,
         openSeriesSearch: () {
@@ -58,71 +54,25 @@ class _MarvelScreenState extends State<MarvelScreen> {
 
           if (!_searchFilterActive) {
             _seriesTypeAheadController.text = "";
-            _marvelSeriesFilterId = null;
-            _loadPage(true);
+            Provider.of<MarvelCharacters>(context,listen: false).marvelSeriesFilterId = null;
+            Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader, true);
           }
 
           setState(() {});
         },
         onSuggestionSelected: (MarvelSeries marvelSeries) {
           _seriesTypeAheadController.text = marvelSeries.title;
-          _marvelSeriesFilterId = marvelSeries.id;
-          _loadPage(true);
+          Provider.of<MarvelCharacters>(context,listen: false).marvelSeriesFilterId = marvelSeries.id;
+          Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader, true);
         },
         client: widget._client,
+        apiBaseUrl: widget._apiBaseUrl,
       ),
-      body: MediaQuery.of(context).size.width < 600 ? OneColView(_marvelCharacters, _scrollController) : ThreeColsView(_marvelCharacters, _scrollController),
+      body: MediaQuery.of(context).size.width < 600 ? OneColView(_scrollController, widget._apiBaseUrl) : ThreeColsView(_scrollController, widget._apiBaseUrl),
     );
   }
 
-  Future<void> _loadPage([bool reset = false]) async {
-    if(reset) {
-      _endReached = false;
-      _marvelCharacters.clear();
-      _lastPageLoaded = 0;
-    }
-
-    if (!_isLoading && !_endReached) {
-      _isLoading = true;
-      _loadingIndication(context);
-
-      final List<MarvelCharacter> loadedMarvelCharacters = await ApiService(AppConfig.of(context).apiBaseUrl, widget._client).getMarvelCharacters(_lastPageLoaded, _marvelSeriesFilterId, (int count) => _marvelCharactersQuantity = count);
-
-      loadedMarvelCharacters.forEach((MarvelCharacter marvelCharacter) {
-        _preloadImage(marvelCharacter);
-      });
-
-      _marvelCharacters.addAll(loadedMarvelCharacters);
-
-      if (_marvelCharacters.length == _marvelCharactersQuantity) {
-        final MarvelCharacter marvelCharacter = MarvelCharacter(
-          name: "You Reached The End",
-          thumbnail: "https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/StoryArc/1542/1542._SX400_QL80_TTD_.jpg",
-        );
-
-        _preloadImage(marvelCharacter);
-        _marvelCharacters.add(marvelCharacter);
-        _endReached = true;
-      }
-
-      Navigator.of(context).pop();
-      _lastPageLoaded++;
-      _isLoading = false;
-      setState(() {});
-    }
-  }
-
-  Null _preloadImage(MarvelCharacter marvelCharacter) {
-    final Image image = marvelCharacter.getImage("${AppConfig.of(context).apiBaseUrl}/images?uri=");
-
-    image.image.resolve(ImageConfiguration()).addListener(ImageStreamListener((_, __) {
-      setState(() {
-        marvelCharacter.loaded = true;
-      });
-    }));
-  }
-
-  Future<Null> _loadingIndication(BuildContext context) async {
+  Future<Null> _loadingIndicationOn() async {
     return await showDialog<Null>(
       context: context,
       barrierDismissible: false,
@@ -138,10 +88,10 @@ class _MarvelScreenState extends State<MarvelScreen> {
                 children: <Widget>[
                   CircularProgressIndicator(),
                   Text("Loading", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                  Text("Page ${_lastPageLoaded + 1}", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                  _lastPageLoaded > 0 ? 
+                  Text("Page ${Provider.of<MarvelCharacters>(context, listen: false).lastPageLoaded + 1}", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  Provider.of<MarvelCharacters>(context, listen: false).lastPageLoaded > 0 ? 
                     Text(
-                        "(Characters ${_lastPageLoaded * 15} to ${(_lastPageLoaded +1) * 15 < _marvelCharactersQuantity ? (_lastPageLoaded +1) * 15 : _marvelCharactersQuantity} on $_marvelCharactersQuantity)",
+                        "(Characters ${Provider.of<MarvelCharacters>(context, listen: false).lastPageLoaded * 15} to ${(Provider.of<MarvelCharacters>(context, listen: false).lastPageLoaded +1) * 15 < Provider.of<MarvelCharacters>(context, listen: false).marvelCharactersQuantity ? (Provider.of<MarvelCharacters>(context, listen: false).lastPageLoaded +1) * 15 : Provider.of<MarvelCharacters>(context, listen: false).marvelCharactersQuantity} on ${Provider.of<MarvelCharacters>(context, listen: false).marvelCharactersQuantity})",
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
                       ) :
                       Offstage()
@@ -153,5 +103,17 @@ class _MarvelScreenState extends State<MarvelScreen> {
         );
       }
     );
+  }
+
+  Null _loadingIndicationOff() {
+    Navigator.of(context).pop();
+  }
+
+  Null _imagePreloader(MarvelCharacter marvelCharacter) {
+    final Image image = marvelCharacter.getImage("${widget._apiBaseUrl}/images?uri=");
+
+    image.image.resolve(ImageConfiguration()).addListener(ImageStreamListener((_, __) {
+        setState(() => marvelCharacter.loaded = true);
+    }));
   }
 }
