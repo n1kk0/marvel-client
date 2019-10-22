@@ -31,6 +31,7 @@ class MarvelCharacters with ChangeNotifier {
     if(reset) {
       _endReached = false;
       _items.clear();
+      _marvelCharactersQuantity = null;
       _lastPageLoaded = 0;
       notifyListeners();
     }

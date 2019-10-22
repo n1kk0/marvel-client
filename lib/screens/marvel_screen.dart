@@ -46,7 +46,6 @@ class _MarvelScreenState extends State<MarvelScreen> {
 
     return Scaffold(
       appBar: SearchSeriesAppBar(
-        marvelCharactersQuantity: Provider.of<MarvelCharacters>(context).marvelCharactersQuantity,
         seriesTypeAheadController: _seriesTypeAheadController,
         searchFilterActive: _searchFilterActive,
         openSeriesSearch: () {
@@ -73,6 +72,8 @@ class _MarvelScreenState extends State<MarvelScreen> {
   }
 
   Future<Null> _loadingIndicationOn() async {
+    final MarvelCharacters marvelCharacters = Provider.of<MarvelCharacters>(context, listen: false);
+
     return await showDialog<Null>(
       context: context,
       barrierDismissible: false,
@@ -88,10 +89,16 @@ class _MarvelScreenState extends State<MarvelScreen> {
                 children: <Widget>[
                   CircularProgressIndicator(),
                   Text("Loading", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                  Text("Page ${Provider.of<MarvelCharacters>(context, listen: false).lastPageLoaded + 1}", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                  Provider.of<MarvelCharacters>(context, listen: false).lastPageLoaded > 0 ? 
+                  marvelCharacters.lastPageLoaded > 0 ?
                     Text(
-                        "(Characters ${Provider.of<MarvelCharacters>(context, listen: false).lastPageLoaded * 15} to ${(Provider.of<MarvelCharacters>(context, listen: false).lastPageLoaded +1) * 15 < Provider.of<MarvelCharacters>(context, listen: false).marvelCharactersQuantity ? (Provider.of<MarvelCharacters>(context, listen: false).lastPageLoaded +1) * 15 : Provider.of<MarvelCharacters>(context, listen: false).marvelCharactersQuantity} on ${Provider.of<MarvelCharacters>(context, listen: false).marvelCharactersQuantity})",
+                      "Page ${marvelCharacters.lastPageLoaded + 1} on ${(marvelCharacters.marvelCharactersQuantity / 15).ceil()}",
+                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    ) :
+                    Offstage()
+                  ,
+                  marvelCharacters.lastPageLoaded > 0 ? 
+                    Text(
+                        "(Characters ${marvelCharacters.lastPageLoaded * 15} to ${(marvelCharacters.lastPageLoaded +1) * 15 < marvelCharacters.marvelCharactersQuantity ? (marvelCharacters.lastPageLoaded + 1) * 15 : marvelCharacters.marvelCharactersQuantity} on ${marvelCharacters.marvelCharactersQuantity})",
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
                       ) :
                       Offstage()

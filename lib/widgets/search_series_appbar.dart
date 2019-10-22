@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:http/http.dart';
+import 'package:provider/provider.dart';
 
+import 'package:marvel_client/providers/marvel_characters.dart';
 import 'package:marvel_client/tools/marvel_api.dart';
 import 'package:marvel_client/models/marvel_series.dart';
 
@@ -10,12 +12,10 @@ class SearchSeriesAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Function openSeriesSearch;
   final Function onSuggestionSelected;
   final TextEditingController seriesTypeAheadController;
-  final int marvelCharactersQuantity;
   final Client client;
   final String apiBaseUrl;
 
   SearchSeriesAppBar({
-    @required this.marvelCharactersQuantity,
     @required this.searchFilterActive,
     @required this.seriesTypeAheadController,
     @required this.openSeriesSearch,
@@ -69,7 +69,7 @@ class _SearchSeriesAppBarState extends State<SearchSeriesAppBar>{
         )
       ,
       actions: <Widget>[
-        CircleAvatar(child: Text("Total\n${widget.marvelCharactersQuantity == null ? "" : widget.marvelCharactersQuantity}", style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold))),
+        CircleAvatar(child: Text("Total\n${Provider.of<MarvelCharacters>(context).marvelCharactersQuantity == null ? "" : Provider.of<MarvelCharacters>(context).marvelCharactersQuantity}", style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold))),
       ],
     );
   }
