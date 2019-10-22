@@ -7,6 +7,7 @@ import 'package:marvel_client/providers/marvel_characters.dart';
 import 'package:marvel_client/models/marvel_series.dart';
 import 'package:marvel_client/views/one_col_view.dart';
 import 'package:marvel_client/views/three_cols_view.dart';
+import 'package:marvel_client/views/five_cols_view.dart';
 import 'package:marvel_client/widgets/search_series_appbar.dart';
 
 class MarvelScreen extends StatefulWidget {
@@ -42,7 +43,11 @@ class _MarvelScreenState extends State<MarvelScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (Provider.of<MarvelCharacters>(context, listen: false).lastPageLoaded  == 0) Future.delayed(Duration(milliseconds: 10), () => Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader));
+    if (Provider.of<MarvelCharacters>(context, listen: false).lastPageLoaded  == 0) {
+      Future.delayed(Duration(milliseconds: 10), () => Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader).then((onValue) {
+        if (MediaQuery.of(context).size.width > 1100) Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader);
+      }));
+    }
 
     return Scaffold(
       appBar: SearchSeriesAppBar(
@@ -67,7 +72,12 @@ class _MarvelScreenState extends State<MarvelScreen> {
         client: widget._client,
         apiBaseUrl: widget._apiBaseUrl,
       ),
-      body: MediaQuery.of(context).size.width < 600 ? OneColView(_scrollController, widget._apiBaseUrl) : ThreeColsView(_scrollController, widget._apiBaseUrl),
+      body: MediaQuery.of(context).size.width < 600 ?
+        OneColView(_scrollController, widget._apiBaseUrl) :
+        MediaQuery.of(context).size.width < 1100 ?
+          ThreeColsView(_scrollController, widget._apiBaseUrl) :
+          FiveColsView(_scrollController, widget._apiBaseUrl)
+      ,
     );
   }
 

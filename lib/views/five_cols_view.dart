@@ -5,17 +5,17 @@ import 'package:marvel_client/models/marvel_character.dart';
 import 'package:marvel_client/providers/marvel_characters.dart';
 import 'package:marvel_client/screens/marvel_hero_screen.dart';
 
-class ThreeColsView extends StatelessWidget {
+class FiveColsView extends StatelessWidget {
   final ScrollController _scrollController;
   final String _apiBaseUrl;
 
-  ThreeColsView(this._scrollController, this._apiBaseUrl, {Key key}) : super(key: key);
+  FiveColsView(this._scrollController, this._apiBaseUrl, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GridView.count(
       controller: _scrollController,
-      crossAxisCount: 3,
+      crossAxisCount: 5,
       padding: EdgeInsets.all(36.0),
       mainAxisSpacing: 36.0,
       crossAxisSpacing: 36.0,
@@ -23,8 +23,8 @@ class ThreeColsView extends StatelessWidget {
         return GestureDetector(
           child: Container(
             constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.width / 5,
-              maxWidth: MediaQuery.of(context).size.width / 5,
+              maxHeight: MediaQuery.of(context).size.width / 7,
+              maxWidth: MediaQuery.of(context).size.width / 7,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -34,14 +34,14 @@ class ThreeColsView extends StatelessWidget {
                   child: marvelcharacter.loaded ? CircleAvatar(
                     backgroundImage: Image.network("$_apiBaseUrl/images?uri=${marvelcharacter.thumbnail}").image,
                     backgroundColor: Colors.transparent,
-                    radius: MediaQuery.of(context).size.width / 10 - 2,
+                    radius: MediaQuery.of(context).size.width / 14 - 2,
                   ) : Center(child: Container(
-                    height: MediaQuery.of(context).size.width / 5 - 4,
-                    width: MediaQuery.of(context).size.width / 5 - 4,
+                    height: MediaQuery.of(context).size.width / 7 - 4,
+                    width: MediaQuery.of(context).size.width / 7 - 4,
                     child: CircularProgressIndicator()
                   ))
                 ),
-                Text(marvelcharacter.name, style: TextStyle(fontSize: MediaQuery.of(context).size.width / 50, fontWeight: FontWeight.bold)),
+                Text(marvelcharacter.name, style: TextStyle(fontSize: MediaQuery.of(context).size.width / 100, fontWeight: FontWeight.bold)),
               ],
             ),
           ),
