@@ -59,7 +59,10 @@ class _MarvelScreenState extends State<MarvelScreen> {
           if (!_searchFilterActive) {
             _seriesTypeAheadController.text = "";
             Provider.of<MarvelCharacters>(context,listen: false).marvelSeriesFilterId = null;
-            Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader, true);
+
+            Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader, true).then((onValue) {
+              if (MediaQuery.of(context).size.width > 1100) Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader);
+            });
           }
 
           setState(() {});
@@ -67,7 +70,10 @@ class _MarvelScreenState extends State<MarvelScreen> {
         onSuggestionSelected: (MarvelSeries marvelSeries) {
           _seriesTypeAheadController.text = marvelSeries.title;
           Provider.of<MarvelCharacters>(context,listen: false).marvelSeriesFilterId = marvelSeries.id;
-          Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader, true);
+
+          Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader, true).then((onValue) {
+            if (MediaQuery.of(context).size.width > 1100) Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader);
+          });
         },
         client: widget._client,
         apiBaseUrl: widget._apiBaseUrl,
