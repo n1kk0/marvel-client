@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:marvel_client/models/marvel_character.dart';
 import 'package:provider/provider.dart';
 
 import 'package:marvel_client/providers/marvel_characters.dart';
+import 'package:marvel_client/models/marvel_character.dart';
 import 'package:marvel_client/models/marvel_series.dart';
 import 'package:marvel_client/views/one_col_view.dart';
 import 'package:marvel_client/views/three_cols_view.dart';
