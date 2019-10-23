@@ -42,7 +42,10 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
             ),
           );
         },
-        itemCount: characters.lastPageLoaded * 15,
+        itemCount: characters.lastPageLoaded * 15 < characters.marvelCharactersQuantity ?
+          characters.lastPageLoaded * 15:
+          characters.marvelCharactersQuantity
+        ,
         onTap: (_) => Navigator.of(context).pop(),
         index: widget._index,
         controller: _controller,
