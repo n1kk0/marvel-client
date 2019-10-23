@@ -33,11 +33,16 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
               children: <Widget>[
                 Hero(
                   tag: widget._tag,
-                  child: CircleAvatar(
+                  child: Provider.of<MarvelCharacters>(context).items[index].loaded ? CircleAvatar(
                     radius: screenWidth(context, dividedBy: 2.3) > screenHeightExcludingToolbar(context, dividedBy: 2.3) ? screenHeightExcludingToolbar(context, dividedBy: 2.3) : screenWidth(context, dividedBy: 2.3),
                     backgroundImage: Image.network("${widget._apiBaseUrl}/images?uri=${characters.items[index].thumbnail}").image,
                     backgroundColor: Colors.transparent,
-                  )
+                  ) :
+                  Container(
+                    height: screenWidth(context) > screenHeightExcludingToolbar(context) ? screenHeightExcludingToolbar(context) : screenWidth(context),
+                    width: screenWidth(context) > screenHeightExcludingToolbar(context) ? screenHeightExcludingToolbar(context) : screenWidth(context),
+                    child: CircularProgressIndicator(strokeWidth: 16),
+                  ),
                 ),
                 Text(characters.items[index].name, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
               ],

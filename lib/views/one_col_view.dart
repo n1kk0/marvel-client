@@ -28,7 +28,7 @@ class OneColView extends StatelessWidget {
               height: 60,
               width: 60,
               child: CircularProgressIndicator()
-            )
+            ),
           ),
           title: Text(marvelCharacter.name),
           onTap: () async {
