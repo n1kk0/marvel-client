@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ class MarvelCharacters with ChangeNotifier {
   final List<MarvelCharacter> _items = List<MarvelCharacter>();
   int _marvelSeriesFilterId;
   int _marvelCharactersQuantity;
+  int _currentHeroId;
   int _lastPageLoaded = 0;
   bool _isLoading = false;
   bool _endReached = false;
@@ -64,5 +66,11 @@ class MarvelCharacters with ChangeNotifier {
       loadingIndicationOff();
       notifyListeners();
     }
+  }
+
+  int setHeroId(int id) {
+    _currentHeroId = id;
+
+    return _currentHeroId;
   }
 }

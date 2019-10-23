@@ -107,7 +107,7 @@ class _MarvelScreenState extends State<MarvelScreen> {
                   Text("Loading", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   marvelCharacters.lastPageLoaded > 0 ?
                     Text(
-                      "Page ${marvelCharacters.lastPageLoaded + 1} on ${(marvelCharacters.marvelCharactersQuantity / 15).ceil()}",
+                      "Page ${marvelCharacters.lastPageLoaded + 1} of ${(marvelCharacters.marvelCharactersQuantity / 15).ceil()}",
                       style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                     ) :
                     Offstage()

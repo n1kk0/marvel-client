@@ -19,7 +19,7 @@ class ThreeColsView extends StatelessWidget {
       padding: EdgeInsets.all(36.0),
       mainAxisSpacing: 36.0,
       crossAxisSpacing: 36.0,
-      children: Provider.of<MarvelCharacters>(context).characters.map((MarvelCharacter marvelcharacter) {
+      children: Provider.of<MarvelCharacters>(context).characters.map((MarvelCharacter marvelCharacter) {
         return GestureDetector(
           child: Container(
             constraints: BoxConstraints(
@@ -30,9 +30,9 @@ class ThreeColsView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Hero(
-                  tag: "kirbyrulez${marvelcharacter.hashCode}",
-                  child: marvelcharacter.loaded ? CircleAvatar(
-                    backgroundImage: Image.network("$_apiBaseUrl/images?uri=${marvelcharacter.thumbnail}").image,
+                  tag: "kirbyrulez${marvelCharacter.hashCode}",
+                  child: marvelCharacter.loaded ? CircleAvatar(
+                    backgroundImage: Image.network("$_apiBaseUrl/images?uri=${marvelCharacter.thumbnail}").image,
                     backgroundColor: Colors.transparent,
                     radius: MediaQuery.of(context).size.width / 10 - 2,
                   ) : Center(child: Container(
@@ -41,7 +41,7 @@ class ThreeColsView extends StatelessWidget {
                     child: CircularProgressIndicator()
                   ))
                 ),
-                Text(marvelcharacter.name, style: TextStyle(fontSize: MediaQuery.of(context).size.width / 50, fontWeight: FontWeight.bold)),
+                Text(marvelCharacter.name, style: TextStyle(fontSize: MediaQuery.of(context).size.width / 50, fontWeight: FontWeight.bold)),
               ],
             ),
           ),
@@ -49,9 +49,8 @@ class ThreeColsView extends StatelessWidget {
             await Navigator.of(context).push(MaterialPageRoute(
               builder: (BuildContext context) => MarvelHeroScreen(
                 _apiBaseUrl,
-                marvelcharacter.thumbnail,
-                marvelcharacter.name,
-                "kirbyrulez${marvelcharacter.hashCode}",
+                Provider.of<MarvelCharacters>(context, listen: false).setHeroId(Provider.of<MarvelCharacters>(context, listen: false).items.indexOf(marvelCharacter)),
+                "kirbyrulez${marvelCharacter.hashCode}",
               ),
             ));
           },

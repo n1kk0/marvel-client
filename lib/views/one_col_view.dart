@@ -35,8 +35,7 @@ class OneColView extends StatelessWidget {
             await Navigator.of(context).push(MaterialPageRoute(
               builder: (BuildContext context) => MarvelHeroScreen(
                 _apiBaseUrl,
-                marvelCharacter.thumbnail,
-                marvelCharacter.name,
+                Provider.of<MarvelCharacters>(context, listen: false).setHeroId(Provider.of<MarvelCharacters>(context, listen: false).items.indexOf(marvelCharacter)),
                 "kirbyrulez${marvelCharacter.hashCode}",
               ),
             ));
