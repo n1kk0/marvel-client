@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 
+import 'package:marvel_client/tools/app_consts.dart';
 import 'package:marvel_client/providers/marvel_characters.dart';
 import 'package:marvel_client/models/marvel_character.dart';
 import 'package:marvel_client/models/marvel_series.dart';
@@ -107,14 +108,14 @@ class _MarvelScreenState extends State<MarvelScreen> {
                   Text("Loading", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   marvelCharacters.lastPageLoaded > 0 ?
                     Text(
-                      "Page ${marvelCharacters.lastPageLoaded + 1} of ${(marvelCharacters.marvelCharactersQuantity / 15).ceil()}",
+                      "Page ${marvelCharacters.lastPageLoaded + 1} of ${(marvelCharacters.marvelCharactersQuantity / AppConsts.itemsPerPage).ceil()}",
                       style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                     ) :
                     Offstage()
                   ,
                   marvelCharacters.lastPageLoaded > 0 ? 
                     Text(
-                        "(Characters ${marvelCharacters.lastPageLoaded * 15} to ${(marvelCharacters.lastPageLoaded +1) * 15 < marvelCharacters.marvelCharactersQuantity ? (marvelCharacters.lastPageLoaded + 1) * 15 : marvelCharacters.marvelCharactersQuantity} on ${marvelCharacters.marvelCharactersQuantity})",
+                        "(Characters ${marvelCharacters.lastPageLoaded * AppConsts.itemsPerPage} to ${(marvelCharacters.lastPageLoaded +1) * AppConsts.itemsPerPage < marvelCharacters.marvelCharactersQuantity ? (marvelCharacters.lastPageLoaded + 1) * AppConsts.itemsPerPage : marvelCharacters.marvelCharactersQuantity} on ${marvelCharacters.marvelCharactersQuantity})",
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
                       ) :
                       Offstage()

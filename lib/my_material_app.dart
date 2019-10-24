@@ -16,7 +16,7 @@ class MyMaterialApp extends StatelessWidget {
     return ChangeNotifierProvider<MarvelCharacters>(
       builder: (context) => MarvelCharacters(httpClient, apiBaseUrl),
       child: MaterialApp(
-        title: 'Marvel Client',
+        title: 'Marvel API Client',
         theme: ThemeData(
           primarySwatch: Colors.red,
           fontFamily: 'HelveticaNeue',

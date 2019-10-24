@@ -46,10 +46,12 @@ class FiveColsView extends StatelessWidget {
             ),
           ),
           onTap: () async {
+            final MarvelCharacters characters = Provider.of<MarvelCharacters>(context, listen: false);
+            characters.currentHeroId = characters.items.indexOf(marvelCharacter);
+
             await Navigator.of(context).push(MaterialPageRoute(
               builder: (BuildContext context) => MarvelHeroScreen(
                 _apiBaseUrl,
-                Provider.of<MarvelCharacters>(context, listen: false).setHeroId(Provider.of<MarvelCharacters>(context, listen: false).items.indexOf(marvelCharacter)),
                 "kirbyrulez${marvelCharacter.hashCode}",
               ),
             ));
