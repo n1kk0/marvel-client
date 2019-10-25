@@ -38,7 +38,7 @@ void main() {
 
       await tester.pump(Duration(seconds: 1));
 
-      expect(find.text('Marvel Characters'), findsOneWidget);
+      expect(find.text('Marvel API Client'), findsOneWidget);
 //      expect(find.text('Adam Warlock'), findsOneWidget);
       expect(find.text('DC Characters'), findsNothing);
 
