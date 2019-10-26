@@ -30,7 +30,7 @@ class _MarvelScreenState extends State<MarvelScreen> {
     super.initState();
 
     _scrollController.addListener(() async {
-      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 10) {
         await Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader);
       }
     });
