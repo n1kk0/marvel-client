@@ -26,7 +26,7 @@ dev_dependencies:
 flutter_icons:
   android: "launcher_icon" 
   ios: true
-  image_path: "assets/icon/silver_surfer.gif"
+  image_path: "assets/icon/android-chrome-512x512.png"
 
 flutter:
   uses-material-design: true
