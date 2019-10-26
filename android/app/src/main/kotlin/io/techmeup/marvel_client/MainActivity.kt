@@ -1,4 +1,4 @@
-package com.example.marvel_client
+package io.techmeup.marvel_client
 
 import android.os.Bundle
 import io.flutter.app.FlutterActivity
