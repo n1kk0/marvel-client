@@ -14,7 +14,7 @@ class MarvelCharacters with ChangeNotifier {
   final List<MarvelCharacter> _items = List<MarvelCharacter>();
   int _marvelSeriesFilterId;
   int _marvelCharactersQuantity;
-  int currentHeroId;
+  int _currentHeroId;
   int _lastPageLoaded = 0;
   bool _isLoading = false;
   bool _endReached = false;
@@ -24,10 +24,15 @@ class MarvelCharacters with ChangeNotifier {
   UnmodifiableListView<MarvelCharacter> get items => UnmodifiableListView(_items);
 
   set marvelSeriesFilterId(int marvelSeriesFilterId) => _marvelSeriesFilterId = marvelSeriesFilterId;
+  set currentHeroId(int currentHeroId) {
+    _currentHeroId = currentHeroId;
+    notifyListeners();
+  }
 
   int get marvelCharactersQuantity => _marvelCharactersQuantity;
   List<MarvelCharacter> get characters => _items;
   int get lastPageLoaded => _lastPageLoaded;
+  int get currentHeroId => _currentHeroId;
 
   Future<void> loadPage(Function loadingIndicationOn, Function loadingIndicationOff, Function imagePreloader, [bool reset = false]) async {
     if(reset) {

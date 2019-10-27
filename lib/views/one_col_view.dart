@@ -36,10 +36,7 @@ class OneColView extends StatelessWidget {
             characters.currentHeroId = characters.items.indexOf(marvelCharacter);
 
             await Navigator.of(context).push(MaterialPageRoute(
-              builder: (BuildContext context) => MarvelHeroScreen(
-                _apiBaseUrl,
-                "kirbyrulez${marvelCharacter.hashCode}",
-              ),
+              builder: (BuildContext context) => MarvelHeroScreen(_apiBaseUrl),
             ));
           },
         );
