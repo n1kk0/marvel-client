@@ -33,21 +33,25 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
                 icon: Icon(Icons.keyboard_arrow_left),
                 color: Colors.red,
                 onPressed: () {
-                  _controller.previousPage(
-                    duration: Duration(milliseconds: 200),
-                    curve: Curves.ease,
-                  );
+                  if (_controller.page > 0) {
+                    _controller.previousPage(
+                      duration: Duration(milliseconds: 200),
+                      curve: Curves.ease,
+                    );
+                  }
                 },
               ),
-              Text("${marvelCharacters.currentHeroId} on ${marvelCharacters.marvelCharactersQuantity}"),
+              Text("${marvelCharacters.currentHeroId + 1} on ${marvelCharacters.marvelCharactersQuantity}"),
               IconButton(
                 icon: Icon(Icons.keyboard_arrow_right),
                 color: Colors.red,
                 onPressed: () {
-                  _controller.nextPage(
-                    duration: Duration(milliseconds: 200),
-                    curve: Curves.ease,
-                  );
+                  if (_controller.page < characters.marvelCharactersQuantity) {
+                    _controller.nextPage(
+                      duration: Duration(milliseconds: 200),
+                      curve: Curves.ease,
+                    );
+                  }
                 },
               ),
             ],
