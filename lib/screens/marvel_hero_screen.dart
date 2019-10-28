@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +24,31 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
   Widget build(BuildContext context) {
     final MarvelCharacters characters = Provider.of<MarvelCharacters>(context);
     _controller = PageController(initialPage: characters.currentHeroId);
+
+    document.addEventListener('keydown', (dynamic event) {
+      if (event.code == 'ArrowRight') {
+        if (_controller.page < characters.marvelCharactersQuantity && !characters.isLoading) {
+          _controller.nextPage(
+            duration: Duration(milliseconds: 200),
+            curve: Curves.ease,
+          );
+
+          event.preventDefault();
+        }
+      } else if (event.code == 'ArrowLeft') {
+        if (_controller.page > 0) {
+          _controller.previousPage(
+            duration: Duration(milliseconds: 200),
+            curve: Curves.ease,
+          );
+
+          event.preventDefault();
+        }
+      } else if (event.code == 'Escape') {
+        Navigator.of(context).pop();
+        event.preventDefault();
+      }
+    });
 
     return Scaffold(
       floatingActionButton: Consumer<MarvelCharacters>(

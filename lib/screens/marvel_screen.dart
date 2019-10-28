@@ -45,9 +45,7 @@ class _MarvelScreenState extends State<MarvelScreen> {
   @override
   Widget build(BuildContext context) {
     if (Provider.of<MarvelCharacters>(context, listen: false).lastPageLoaded  == 0) {
-      Future.delayed(Duration(milliseconds: 10), () => Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader).then((onValue) {
-        if (MediaQuery.of(context).size.width > 1100) Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader);
-      }));
+      Future.delayed(Duration(milliseconds: 10), () => Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader));
     }
 
     return Scaffold(

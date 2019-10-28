@@ -33,6 +33,7 @@ class MarvelCharacters with ChangeNotifier {
   List<MarvelCharacter> get characters => _items;
   int get lastPageLoaded => _lastPageLoaded;
   int get currentHeroId => _currentHeroId;
+  bool get isLoading => _isLoading;
 
   Future<void> loadPage(Function loadingIndicationOn, Function loadingIndicationOff, Function imagePreloader, [bool reset = false]) async {
     if(reset) {
