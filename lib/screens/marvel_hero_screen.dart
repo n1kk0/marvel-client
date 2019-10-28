@@ -1,8 +1,8 @@
-import 'dart:html';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
+import 'package:universal_html/html.dart' as uh;
 
 import 'package:marvel_client/tools/app_consts.dart';
 import 'package:marvel_client/providers/marvel_characters.dart';
@@ -19,36 +19,40 @@ class MarvelHeroScreen extends StatefulWidget {
 
 class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
   PageController _controller;
+  bool _popped = false;
 
   @override
   Widget build(BuildContext context) {
     final MarvelCharacters characters = Provider.of<MarvelCharacters>(context);
     _controller = PageController(initialPage: characters.currentHeroId);
 
-    document.addEventListener('keydown', (dynamic event) {
-      if (event.code == 'ArrowRight') {
-        if (_controller.page < characters.marvelCharactersQuantity && !characters.isLoading) {
-          _controller.nextPage(
-            duration: Duration(milliseconds: 200),
-            curve: Curves.ease,
-          );
+    if (kIsWeb) {
+      uh.document.addEventListener('keydown', (dynamic event) {
+        if (event.code == 'ArrowRight') {
+          if (_controller.page < characters.marvelCharactersQuantity && !characters.isLoading) {
+            _controller.nextPage(
+              duration: Duration(milliseconds: 200),
+              curve: Curves.ease,
+            );
 
+            event.preventDefault();
+          }
+        } else if (event.code == 'ArrowLeft') {
+          if (_controller.page > 0) {
+            _controller.previousPage(
+              duration: Duration(milliseconds: 200),
+              curve: Curves.ease,
+            );
+
+            event.preventDefault();
+          }
+        } else if (event.code == 'Escape' && !_popped) {
+          _popped = true;
+          Navigator.of(context).pop();
           event.preventDefault();
         }
-      } else if (event.code == 'ArrowLeft') {
-        if (_controller.page > 0) {
-          _controller.previousPage(
-            duration: Duration(milliseconds: 200),
-            curve: Curves.ease,
-          );
-
-          event.preventDefault();
-        }
-      } else if (event.code == 'Escape') {
-        Navigator.of(context).pop();
-        event.preventDefault();
-      }
-    });
+      });
+    }
 
     return Scaffold(
       floatingActionButton: Consumer<MarvelCharacters>(
