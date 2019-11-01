@@ -97,7 +97,7 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
 
           characters.currentHeroId = index;
 
-          if (characters.currentHeroId + 2 == characters.items.length) {
+          if (characters.currentHeroId + 2 >= characters.items.length) {
             await characters.loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader);
           }
         },
