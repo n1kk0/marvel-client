@@ -41,7 +41,15 @@ class ThreeColsView extends StatelessWidget {
                     child: CircularProgressIndicator()
                   ))
                 ),
-                Text(marvelCharacter.name, style: TextStyle(fontSize: MediaQuery.of(context).size.width / 50, fontWeight: FontWeight.bold)),
+                Flexible(
+                  child: Container(
+                    child: Text(
+                      marvelCharacter.name,
+                      overflow: TextOverflow.ellipsis,
+                      style:TextStyle(fontSize: MediaQuery.of(context).size.width / 50, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
