@@ -7,6 +7,7 @@ import 'package:universal_html/html.dart' as uh;
 import 'package:marvel_client/tools/app_consts.dart';
 import 'package:marvel_client/providers/marvel_characters.dart';
 import 'package:marvel_client/models/marvel_character.dart';
+import 'package:marvel_client/widgets/marvel_botton_bar.dart';
 
 class MarvelHeroScreen extends StatefulWidget {
   final String _apiBaseUrl;
@@ -129,6 +130,7 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
         },
         itemCount: characters.marvelCharactersQuantity,
       ),
+      bottomNavigationBar: MarvelBottomAppBar(characters.items[characters.currentHeroId].resourceUri),
     );
   }
 
