@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
+import 'package:universal_html/html.dart' as uh;
 
 import 'package:marvel_client/tools/app_consts.dart';
 import 'package:marvel_client/providers/marvel_characters.dart';
@@ -10,6 +12,7 @@ import 'package:marvel_client/views/one_col_view.dart';
 import 'package:marvel_client/views/three_cols_view.dart';
 import 'package:marvel_client/views/five_cols_view.dart';
 import 'package:marvel_client/widgets/search_series_appbar.dart';
+import 'package:marvel_client/widgets/marvel_botton_bar.dart';
 
 class MarvelScreen extends StatefulWidget {
   final Client _client;
@@ -24,13 +27,14 @@ class _MarvelScreenState extends State<MarvelScreen> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _seriesTypeAheadController = TextEditingController();
   bool _searchFilterActive = false;
+  bool _isScrolling = false;
 
   @override
   void initState() {
     super.initState();
 
     _scrollController.addListener(() async {
-      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 10) {
+      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 50) {
         await Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader);
       }
     });
@@ -45,7 +49,51 @@ class _MarvelScreenState extends State<MarvelScreen> {
   @override
   Widget build(BuildContext context) {
     if (Provider.of<MarvelCharacters>(context, listen: false).lastPageLoaded  == 0) {
-      Future.delayed(Duration(milliseconds: 10), () => Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader));
+      Future.delayed(Duration(milliseconds: 10), () => Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader).then((_) async {
+        if (
+          MediaQuery.of(context).size.width >= 600 && MediaQuery.of(context).size.width < 1100 &&
+          MediaQuery.of(context).size.width / MediaQuery.of(context).size.height < 3 / 5
+        ) {
+          await Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader);
+        }
+
+        if (
+          MediaQuery.of(context).size.width >= 1100 &&
+          MediaQuery.of(context).size.width / MediaQuery.of(context).size.height < 5 / 3
+        ) {
+          await Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader);
+        }
+
+        _scrollController.position.isScrollingNotifier.addListener(() {
+          _isScrolling = _scrollController.position.isScrollingNotifier.value;
+        });
+      }));
+    }
+
+    if (kIsWeb) {
+      uh.document.addEventListener('keydown', (dynamic event) {
+        if (event.code == 'ArrowDown' && _isScrolling == false) {
+          if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - _scrollController.position.viewportDimension) {
+            Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader);
+          }
+
+          _scrollController.animateTo(
+            _scrollController.position.pixels + _scrollController.position.viewportDimension,
+            duration: Duration(milliseconds: 500),
+            curve: Curves.ease,
+          );
+
+          event.preventDefault();
+        } else if (event.code == 'ArrowUp' && _isScrolling == false) {
+          _scrollController.animateTo(
+            _scrollController.position.pixels < _scrollController.position.viewportDimension ? 0 : _scrollController.position.pixels - _scrollController.position.viewportDimension,
+            duration: Duration(milliseconds: 500),
+            curve: Curves.ease,
+          );
+
+          event.preventDefault();
+        }
+      });
     }
 
     return Scaffold(
@@ -83,6 +131,7 @@ class _MarvelScreenState extends State<MarvelScreen> {
           ThreeColsView(_scrollController, widget._apiBaseUrl) :
           FiveColsView(_scrollController, widget._apiBaseUrl)
       ,
+      bottomNavigationBar: MarvelBottomAppBar(),
     );
   }
 
