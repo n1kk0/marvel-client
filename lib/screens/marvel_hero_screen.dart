@@ -8,6 +8,7 @@ import 'package:marvel_client/tools/app_consts.dart';
 import 'package:marvel_client/providers/marvel_characters.dart';
 import 'package:marvel_client/models/marvel_character.dart';
 import 'package:marvel_client/widgets/marvel_botton_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MarvelHeroScreen extends StatefulWidget {
   final String _apiBaseUrl;
@@ -112,7 +113,7 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
                   Hero(
                     tag: "kirbyrulez${characters.items[index].hashCode}",
                     child: characters.items[index].loaded ? CircleAvatar(
-                      radius: screenWidth(context, dividedBy: 2.3) > screenHeightExcludingToolbar(context, dividedBy: 2.3) ? screenHeightExcludingToolbar(context, dividedBy: 2.3) : screenWidth(context, dividedBy: 2.3),
+                      radius: screenWidth(context, dividedBy: 2.3) > screenHeightExcludingToolbar(context, dividedBy: 2.3) ? screenHeightExcludingToolbar(context, dividedBy: 2.5) : screenWidth(context, dividedBy: 2.5),
                       backgroundImage: Image.network("${widget._apiBaseUrl}/images?uri=${characters.items[index].thumbnail}").image,
                       backgroundColor: Colors.transparent,
                     ) :
@@ -123,6 +124,16 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
                     ),
                   ),
                   Text(characters.items[index].name, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      _marvelLinkButton("Detail", characters.items[index].detailUri),
+                      Padding(padding: EdgeInsets.all(2)),
+                      _marvelLinkButton("Wiki", characters.items[index].wikiUri),
+                      Padding(padding: EdgeInsets.all(2)),
+                      _marvelLinkButton("Comics", characters.items[index].comicsUri),
+                    ],
+                  )
                 ],
               ),
             ),
@@ -130,8 +141,29 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
         },
         itemCount: characters.marvelCharactersQuantity,
       ),
-      bottomNavigationBar: MarvelBottomAppBar(characters.items[characters.currentHeroId].resourceUri),
+      bottomNavigationBar: MarvelBottomAppBar(),
     );
+  }
+
+  Widget _marvelLinkButton(String label, String url) {
+    return url != null ? RaisedButton(
+      color: Colors.red,
+      child: Row(
+        children: <Widget>[
+          Text(label, style: TextStyle(color: Theme.of(context).primaryTextTheme.body1.color, fontSize: 16, fontWeight: FontWeight.bold)),
+          Padding(padding: EdgeInsets.all(5)),
+          Icon(Icons.open_in_new, color: Theme.of(context).primaryTextTheme.body1.color, size: 16),
+        ],
+      ),
+      onPressed: () async {
+        if (kIsWeb) {
+          uh.window.open(url, 'marvel');
+        } else {
+          await launch(url);
+        }
+      },
+    ) : Offstage();
+
   }
 
   Size screenSize(BuildContext context) {

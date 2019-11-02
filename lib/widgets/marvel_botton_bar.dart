@@ -4,8 +4,7 @@ import 'package:universal_html/html.dart' as uh;
 import 'package:url_launcher/url_launcher.dart';
 
 class MarvelBottomAppBar extends StatelessWidget {
-  final String url;
-  const MarvelBottomAppBar([this.url = 'http://marvel.com']);
+  const MarvelBottomAppBar();
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +17,9 @@ class MarvelBottomAppBar extends StatelessWidget {
         ),
         onTap: () async {
           if (kIsWeb) {
-            uh.window.open(url, 'marvel');
+            uh.window.open('http://marvel.com', 'marvel');
           } else {
-            await launch(url);
+            await launch('http://marvel.com');
           }
         },
       ),
