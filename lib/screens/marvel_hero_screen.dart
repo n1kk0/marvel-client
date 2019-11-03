@@ -4,9 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:universal_html/html.dart' as uh;
 
-import 'package:marvel_client/tools/app_consts.dart';
 import 'package:marvel_client/providers/marvel_characters.dart';
-import 'package:marvel_client/models/marvel_character.dart';
 import 'package:marvel_client/widgets/marvel_botton_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -26,34 +24,11 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
   @override
   Widget build(BuildContext context) {
     final MarvelCharacters characters = Provider.of<MarvelCharacters>(context);
+
     _controller = PageController(initialPage: characters.currentHeroId);
 
     if (kIsWeb) {
-      uh.document.addEventListener('keydown', (dynamic event) {
-        if (event.code == 'ArrowRight') {
-          if (_controller.page < characters.marvelCharactersQuantity && !characters.isLoading) {
-            _controller.nextPage(
-              duration: Duration(milliseconds: 200),
-              curve: Curves.ease,
-            );
-
-            event.preventDefault();
-          }
-        } else if (event.code == 'ArrowLeft') {
-          if (_controller.page > 0) {
-            _controller.previousPage(
-              duration: Duration(milliseconds: 200),
-              curve: Curves.ease,
-            );
-
-            event.preventDefault();
-          }
-        } else if (event.code == 'Escape' && !_popped) {
-          _popped = true;
-          Navigator.of(context).pop();
-          event.preventDefault();
-        }
-      });
+      _initKeyboardListener(characters);
     }
 
     return Scaffold(
@@ -100,7 +75,7 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
           characters.currentHeroId = index;
 
           if (characters.currentHeroId + 2 >= characters.items.length) {
-            await characters.loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader);
+            await characters.loadPage(context);
           }
         },
         itemBuilder: (BuildContext context, int index) {
@@ -113,13 +88,13 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
                   Hero(
                     tag: "kirbyrulez${characters.items[index].hashCode}",
                     child: characters.items[index].loaded ? CircleAvatar(
-                      radius: screenWidth(context, dividedBy: 2.3) > screenHeightExcludingToolbar(context, dividedBy: 2.3) ? screenHeightExcludingToolbar(context, dividedBy: 2.5) : screenWidth(context, dividedBy: 2.5),
+                      radius: screenWidth(context, dividedBy: 2.3) > _screenHeightExcludingToolbar(context, dividedBy: 2.3) ? _screenHeightExcludingToolbar(context, dividedBy: 2.5) : screenWidth(context, dividedBy: 2.5),
                       backgroundImage: Image.network("${widget._apiBaseUrl}/images?uri=${characters.items[index].thumbnail}").image,
                       backgroundColor: Colors.transparent,
                     ) :
                     Container(
-                      height: screenWidth(context) > screenHeightExcludingToolbar(context) ? screenHeightExcludingToolbar(context) : screenWidth(context),
-                      width: screenWidth(context) > screenHeightExcludingToolbar(context) ? screenHeightExcludingToolbar(context) : screenWidth(context),
+                      height: screenWidth(context) > _screenHeightExcludingToolbar(context) ? _screenHeightExcludingToolbar(context) : screenWidth(context),
+                      width: screenWidth(context) > _screenHeightExcludingToolbar(context) ? _screenHeightExcludingToolbar(context) : screenWidth(context),
                       child: CircularProgressIndicator(strokeWidth: 16),
                     ),
                   ),
@@ -145,6 +120,41 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
     );
   }
 
+  @override
+  void dispose() {
+    _controller.dispose();
+
+    super.dispose();
+  }
+
+  Null _initKeyboardListener(MarvelCharacters characters) {
+    uh.document.addEventListener('keydown', (dynamic event) {
+      if (event.code == 'ArrowRight') {
+        if (_controller.page < characters.marvelCharactersQuantity && !characters.isLoading) {
+          _controller.nextPage(
+            duration: Duration(milliseconds: 200),
+            curve: Curves.ease,
+          );
+
+          event.preventDefault();
+        }
+      } else if (event.code == 'ArrowLeft') {
+        if (_controller.page > 0) {
+          _controller.previousPage(
+            duration: Duration(milliseconds: 200),
+            curve: Curves.ease,
+          );
+
+          event.preventDefault();
+        }
+      } else if (event.code == 'Escape' && !_popped) {
+        _popped = true;
+        Navigator.of(context).pop();
+        event.preventDefault();
+      }
+    });
+  }
+
   Widget _marvelLinkButton(String label, String url) {
     return url != null ? RaisedButton(
       color: Colors.red,
@@ -163,69 +173,21 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
         }
       },
     ) : Offstage();
-
   }
 
-  Size screenSize(BuildContext context) {
+  Size _screenSize(BuildContext context) {
     return MediaQuery.of(context).size;
   }
 
-  double screenHeight(BuildContext context, {double dividedBy = 1, double reducedBy = 0.0}) {
-    return (screenSize(context).height - reducedBy) / dividedBy;
+  double _screenHeight(BuildContext context, {double dividedBy = 1, double reducedBy = 0.0}) {
+    return (_screenSize(context).height - reducedBy) / dividedBy;
   }
 
   double screenWidth(BuildContext context, {double dividedBy = 1, double reducedBy = 0.0}) {
-    return (screenSize(context).width - reducedBy) / dividedBy;
+    return (_screenSize(context).width - reducedBy) / dividedBy;
   }
 
-  double screenHeightExcludingToolbar(BuildContext context, {double dividedBy = 1}) {
-    return screenHeight(context, dividedBy: dividedBy, reducedBy: kToolbarHeight);
-  }
-
-  Future<Null> _loadingIndicationOn() async {
-    final MarvelCharacters marvelCharacters = Provider.of<MarvelCharacters>(context, listen: false);
-
-    return await showDialog<Null>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return SimpleDialog(
-          elevation: 0.0,
-          backgroundColor: Colors.transparent,
-          children: <Widget>[
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  CircularProgressIndicator(),
-                  Text("Loading", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                  Text(
-                    "Page ${marvelCharacters.lastPageLoaded + 1} of ${(marvelCharacters.marvelCharactersQuantity / AppConsts.itemsPerPage).ceil()}",
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "(Characters ${marvelCharacters.lastPageLoaded * AppConsts.itemsPerPage} to ${(marvelCharacters.lastPageLoaded + 1) * AppConsts.itemsPerPage < marvelCharacters.marvelCharactersQuantity ? (marvelCharacters.lastPageLoaded + 1) * AppConsts.itemsPerPage : marvelCharacters.marvelCharactersQuantity} on ${marvelCharacters.marvelCharactersQuantity})",
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
-                  ),
-                ],
-              ),
-            )
-          ],
-        );
-      }
-    );
-  }
-
-  Null _loadingIndicationOff() {
-    Navigator.of(context).pop();
-  }
-
-  Null _imagePreloader(MarvelCharacter marvelCharacter) {
-    final Image image = marvelCharacter.getImage("${widget._apiBaseUrl}/images?uri=");
-
-    image.image.resolve(ImageConfiguration()).addListener(ImageStreamListener((_, __) {
-        marvelCharacter.loaded = true;
-    }));
+  double _screenHeightExcludingToolbar(BuildContext context, {double dividedBy = 1}) {
+    return _screenHeight(context, dividedBy: dividedBy, reducedBy: kToolbarHeight);
   }
 }

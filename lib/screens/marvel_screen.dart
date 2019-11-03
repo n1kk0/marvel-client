@@ -4,9 +4,7 @@ import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:universal_html/html.dart' as uh;
 
-import 'package:marvel_client/tools/app_consts.dart';
 import 'package:marvel_client/providers/marvel_characters.dart';
-import 'package:marvel_client/models/marvel_character.dart';
 import 'package:marvel_client/models/marvel_series.dart';
 import 'package:marvel_client/views/one_col_view.dart';
 import 'package:marvel_client/views/multi_cols_view.dart';
@@ -34,65 +32,17 @@ class _MarvelScreenState extends State<MarvelScreen> {
 
     _scrollController.addListener(() async {
       if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 50) {
-        await Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader);
+        await Provider.of<MarvelCharacters>(context, listen: false).loadPage(context);
       }
     });
   }
 
   @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    if (Provider.of<MarvelCharacters>(context, listen: false).lastPageLoaded  == 0) {
-      Future.delayed(Duration(milliseconds: 10), () => Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader).then((_) async {
-        if (
-          MediaQuery.of(context).size.width >= 600 && MediaQuery.of(context).size.width < 1100 &&
-          MediaQuery.of(context).size.width / MediaQuery.of(context).size.height < 3 / 5
-        ) {
-          await Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader);
-        }
-
-        if (
-          MediaQuery.of(context).size.width >= 1100 &&
-          MediaQuery.of(context).size.width / MediaQuery.of(context).size.height < 5 / 3
-        ) {
-          await Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader);
-        }
-
-        _scrollController.position.isScrollingNotifier.addListener(() {
-          _isScrolling = _scrollController.position.isScrollingNotifier.value;
-        });
-      }));
-    }
+    _initPageLoading();
 
     if (kIsWeb) {
-      uh.document.addEventListener('keydown', (dynamic event) {
-        if (event.code == 'ArrowDown' && _isScrolling == false) {
-          if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - _scrollController.position.viewportDimension) {
-            Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader);
-          }
-
-          _scrollController.animateTo(
-            _scrollController.position.pixels + _scrollController.position.viewportDimension,
-            duration: Duration(milliseconds: 500),
-            curve: Curves.ease,
-          );
-
-          event.preventDefault();
-        } else if (event.code == 'ArrowUp' && _isScrolling == false) {
-          _scrollController.animateTo(
-            _scrollController.position.pixels < _scrollController.position.viewportDimension ? 0 : _scrollController.position.pixels - _scrollController.position.viewportDimension,
-            duration: Duration(milliseconds: 500),
-            curve: Curves.ease,
-          );
-
-          event.preventDefault();
-        }
-      });
+      _initKeyboardListener();
     }
 
     return Scaffold(
@@ -106,8 +56,8 @@ class _MarvelScreenState extends State<MarvelScreen> {
             _seriesTypeAheadController.text = "";
             Provider.of<MarvelCharacters>(context,listen: false).marvelSeriesFilterId = null;
 
-            Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader, true).then((onValue) {
-              if (MediaQuery.of(context).size.width > 1100) Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader);
+            Provider.of<MarvelCharacters>(context, listen: false).loadPage(context, true).then((onValue) {
+              if (MediaQuery.of(context).size.width > 1100) Provider.of<MarvelCharacters>(context, listen: false).loadPage(context);
             });
           }
 
@@ -117,8 +67,8 @@ class _MarvelScreenState extends State<MarvelScreen> {
           _seriesTypeAheadController.text = marvelSeries.title;
           Provider.of<MarvelCharacters>(context,listen: false).marvelSeriesFilterId = marvelSeries.id;
 
-          Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader, true).then((onValue) {
-            if (MediaQuery.of(context).size.width > 1100) Provider.of<MarvelCharacters>(context, listen: false).loadPage(_loadingIndicationOn, _loadingIndicationOff, _imagePreloader);
+          Provider.of<MarvelCharacters>(context, listen: false).loadPage(context, true).then((onValue) {
+            if (MediaQuery.of(context).size.width > 1100) Provider.of<MarvelCharacters>(context, listen: false).loadPage(context);
           });
         },
         client: widget._client,
@@ -134,56 +84,60 @@ class _MarvelScreenState extends State<MarvelScreen> {
     );
   }
 
-  Future<Null> _loadingIndicationOn() async {
-    final MarvelCharacters marvelCharacters = Provider.of<MarvelCharacters>(context, listen: false);
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _seriesTypeAheadController.dispose();
+    super.dispose();
+  }
 
-    return await showDialog<Null>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return SimpleDialog(
-          elevation: 0.0,
-          backgroundColor: Colors.transparent,
-          children: <Widget>[
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  CircularProgressIndicator(),
-                  Text("Loading", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                  marvelCharacters.lastPageLoaded > 0 ?
-                    Text(
-                      "Page ${marvelCharacters.lastPageLoaded + 1} of ${(marvelCharacters.marvelCharactersQuantity / AppConsts.itemsPerPage).ceil()}",
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                    ) :
-                    Offstage()
-                  ,
-                  marvelCharacters.lastPageLoaded > 0 ? 
-                    Text(
-                        "(Characters ${marvelCharacters.lastPageLoaded * AppConsts.itemsPerPage} to ${(marvelCharacters.lastPageLoaded +1) * AppConsts.itemsPerPage < marvelCharacters.marvelCharactersQuantity ? (marvelCharacters.lastPageLoaded + 1) * AppConsts.itemsPerPage : marvelCharacters.marvelCharactersQuantity} on ${marvelCharacters.marvelCharactersQuantity})",
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
-                      ) :
-                      Offstage()
-                    ,
-                ],
-              ),
-            )
-          ],
+  Null _initPageLoading() {
+    if (Provider.of<MarvelCharacters>(context, listen: false).lastPageLoaded  == 0) {
+      Future.delayed(Duration(milliseconds: 10), () => Provider.of<MarvelCharacters>(context, listen: false).loadPage(context).then((_) async {
+        if (
+          MediaQuery.of(context).size.width >= 600 && MediaQuery.of(context).size.width < 1100 &&
+          MediaQuery.of(context).size.width / MediaQuery.of(context).size.height < 3 / 5
+        ) {
+          await Provider.of<MarvelCharacters>(context, listen: false).loadPage(context);
+        }
+
+        if (
+          MediaQuery.of(context).size.width >= 1100 &&
+          MediaQuery.of(context).size.width / MediaQuery.of(context).size.height < 5 / 3
+        ) {
+          await Provider.of<MarvelCharacters>(context, listen: false).loadPage(context);
+        }
+
+        _scrollController.position.isScrollingNotifier.addListener(() {
+          _isScrolling = _scrollController.position.isScrollingNotifier.value;
+        });
+      }));
+    }
+  }
+
+  Null _initKeyboardListener() {
+    uh.document.addEventListener('keydown', (dynamic event) {
+      if (event.code == 'ArrowDown' && _isScrolling == false) {
+        if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - _scrollController.position.viewportDimension) {
+          Provider.of<MarvelCharacters>(context, listen: false).loadPage(context);
+        }
+
+        _scrollController.animateTo(
+          _scrollController.position.pixels + _scrollController.position.viewportDimension,
+          duration: Duration(milliseconds: 500),
+          curve: Curves.ease,
         );
+
+        event.preventDefault();
+      } else if (event.code == 'ArrowUp' && _isScrolling == false) {
+        _scrollController.animateTo(
+          _scrollController.position.pixels < _scrollController.position.viewportDimension ? 0 : _scrollController.position.pixels - _scrollController.position.viewportDimension,
+          duration: Duration(milliseconds: 500),
+          curve: Curves.ease,
+        );
+
+        event.preventDefault();
       }
-    );
-  }
-
-  Null _loadingIndicationOff() {
-    Navigator.of(context).pop();
-  }
-
-  Null _imagePreloader(MarvelCharacter marvelCharacter) {
-    final Image image = marvelCharacter.getImage("${widget._apiBaseUrl}/images?uri=");
-
-    image.image.resolve(ImageConfiguration()).addListener(ImageStreamListener((_, __) {
-        setState(() => marvelCharacter.loaded = true);
-    }));
+    });
   }
 }
