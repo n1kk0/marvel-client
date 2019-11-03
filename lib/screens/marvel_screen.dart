@@ -9,8 +9,7 @@ import 'package:marvel_client/providers/marvel_characters.dart';
 import 'package:marvel_client/models/marvel_character.dart';
 import 'package:marvel_client/models/marvel_series.dart';
 import 'package:marvel_client/views/one_col_view.dart';
-import 'package:marvel_client/views/three_cols_view.dart';
-import 'package:marvel_client/views/five_cols_view.dart';
+import 'package:marvel_client/views/multi_cols_view.dart';
 import 'package:marvel_client/widgets/search_series_appbar.dart';
 import 'package:marvel_client/widgets/marvel_botton_bar.dart';
 
@@ -128,8 +127,8 @@ class _MarvelScreenState extends State<MarvelScreen> {
       body: MediaQuery.of(context).size.width < 600 ?
         OneColView(_scrollController, widget._apiBaseUrl) :
         MediaQuery.of(context).size.width < 1100 ?
-          ThreeColsView(_scrollController, widget._apiBaseUrl) :
-          FiveColsView(_scrollController, widget._apiBaseUrl)
+          MultiColsView(_scrollController, 3, widget._apiBaseUrl) :
+          MultiColsView(_scrollController, 5, widget._apiBaseUrl)
       ,
       bottomNavigationBar: MarvelBottomAppBar(),
     );

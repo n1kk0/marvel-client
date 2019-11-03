@@ -5,17 +5,18 @@ import 'package:marvel_client/providers/marvel_characters.dart';
 import 'package:marvel_client/models/marvel_character.dart';
 import 'package:marvel_client/screens/marvel_hero_screen.dart';
 
-class ThreeColsView extends StatelessWidget {
+class MultiColsView extends StatelessWidget {
   final ScrollController _scrollController;
   final String _apiBaseUrl;
+  final int _cols;
 
-  ThreeColsView(this._scrollController, this._apiBaseUrl, {Key key}) : super(key: key);
+  MultiColsView(this._scrollController, this._cols, this._apiBaseUrl, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GridView.count(
       controller: _scrollController,
-      crossAxisCount: 3,
+      crossAxisCount: _cols,
       padding: EdgeInsets.all(36.0),
       mainAxisSpacing: 36.0,
       crossAxisSpacing: 36.0,
@@ -23,8 +24,8 @@ class ThreeColsView extends StatelessWidget {
         return GestureDetector(
           child: Container(
             constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.width / 5,
-              maxWidth: MediaQuery.of(context).size.width / 5,
+              maxHeight: MediaQuery.of(context).size.width / (_cols + 2),
+              maxWidth: MediaQuery.of(context).size.width / (_cols + 2),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -34,10 +35,10 @@ class ThreeColsView extends StatelessWidget {
                   child: marvelCharacter.loaded ? CircleAvatar(
                     backgroundImage: Image.network("$_apiBaseUrl/images?uri=${marvelCharacter.thumbnail}").image,
                     backgroundColor: Colors.transparent,
-                    radius: MediaQuery.of(context).size.width / 10 - 2,
+                    radius: MediaQuery.of(context).size.width / ((_cols + 2) * 2) - 2,
                   ) : Center(child: Container(
-                    height: MediaQuery.of(context).size.width / 5 - 4,
-                    width: MediaQuery.of(context).size.width / 5 - 4,
+                    height: MediaQuery.of(context).size.width / (_cols + 2) - 4,
+                    width: MediaQuery.of(context).size.width / (_cols + 2) - 4,
                     child: CircularProgressIndicator()
                   ))
                 ),
@@ -46,7 +47,7 @@ class ThreeColsView extends StatelessWidget {
                     child: Text(
                       marvelCharacter.name,
                       overflow: TextOverflow.ellipsis,
-                      style:TextStyle(fontSize: MediaQuery.of(context).size.width / 50, fontWeight: FontWeight.bold),
+                      style:TextStyle(fontSize: MediaQuery.of(context).size.width / ((_cols + 2) * 10), fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
