@@ -36,15 +36,15 @@ class _MarvelScreenState extends State<MarvelScreen> {
         await Provider.of<MarvelCharacters>(context, listen: false).loadPage(context);
       }
     });
+
+    if (kIsWeb) {
+      uh.document.addEventListener('keydown', _keydownEventListener);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     _initPageLoading();
-
-    if (kIsWeb) {
-      _initKeyboardListener();
-    }
 
     return Scaffold(
       appBar: SearchSeriesAppBar(
@@ -89,6 +89,7 @@ class _MarvelScreenState extends State<MarvelScreen> {
   void dispose() {
     _scrollController.dispose();
     _seriesTypeAheadController.dispose();
+    uh.document.removeEventListener('keydown', _keydownEventListener);
     super.dispose();
   }
 
@@ -116,29 +117,27 @@ class _MarvelScreenState extends State<MarvelScreen> {
     }
   }
 
-  Null _initKeyboardListener() {
-    uh.document.addEventListener('keydown', (dynamic event) {
-      if (event.code == 'ArrowDown' && _isScrolling == false) {
-        if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - _scrollController.position.viewportDimension) {
-          Provider.of<MarvelCharacters>(context, listen: false).loadPage(context);
-        }
-
-        _scrollController.animateTo(
-          _scrollController.position.pixels + _scrollController.position.viewportDimension,
-          duration: Duration(milliseconds: 500),
-          curve: Curves.ease,
-        );
-
-        event.preventDefault();
-      } else if (event.code == 'ArrowUp' && _isScrolling == false) {
-        _scrollController.animateTo(
-          _scrollController.position.pixels < _scrollController.position.viewportDimension ? 0 : _scrollController.position.pixels - _scrollController.position.viewportDimension,
-          duration: Duration(milliseconds: 500),
-          curve: Curves.ease,
-        );
-
-        event.preventDefault();
+  void _keydownEventListener(dynamic event) {
+    if (event.code == 'ArrowDown' && _isScrolling == false) {
+      if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - _scrollController.position.viewportDimension) {
+        Provider.of<MarvelCharacters>(context, listen: false).loadPage(context);
       }
-    });
+
+      _scrollController.animateTo(
+        _scrollController.position.pixels + _scrollController.position.viewportDimension,
+        duration: Duration(milliseconds: 500),
+        curve: Curves.ease,
+      );
+
+      event.preventDefault();
+    } else if (event.code == 'ArrowUp' && _isScrolling == false) {
+      _scrollController.animateTo(
+        _scrollController.position.pixels < _scrollController.position.viewportDimension ? 0 : _scrollController.position.pixels - _scrollController.position.viewportDimension,
+        duration: Duration(milliseconds: 500),
+        curve: Curves.ease,
+      );
+
+      event.preventDefault();
+    }
   }
 }

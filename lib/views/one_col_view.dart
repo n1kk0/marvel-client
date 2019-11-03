@@ -36,7 +36,7 @@ class OneColView extends StatelessWidget {
             characters.currentHeroId = characters.items.indexOf(marvelCharacter);
 
             await Navigator.of(context).push(MaterialPageRoute(
-              builder: (BuildContext context) => MarvelHeroScreen(_apiBaseUrl),
+              builder: (BuildContext context) => MarvelHeroScreen(_apiBaseUrl, PageController(initialPage: characters.currentHeroId)),
             ));
           },
         );
