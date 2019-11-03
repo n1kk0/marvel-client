@@ -4,6 +4,7 @@ import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:universal_html/html.dart' as uh;
 
+import 'package:marvel_client/tools/app_consts.dart';
 import 'package:marvel_client/providers/marvel_characters.dart';
 import 'package:marvel_client/models/marvel_series.dart';
 import 'package:marvel_client/views/one_col_view.dart';
@@ -77,8 +78,8 @@ class _MarvelScreenState extends State<MarvelScreen> {
       body: MediaQuery.of(context).size.width < 600 ?
         OneColView(_scrollController, widget._apiBaseUrl) :
         MediaQuery.of(context).size.width < 1100 ?
-          MultiColsView(_scrollController, 3, widget._apiBaseUrl) :
-          MultiColsView(_scrollController, 5, widget._apiBaseUrl)
+          MultiColsView(_scrollController, AppConsts.over600Cols, widget._apiBaseUrl) :
+          MultiColsView(_scrollController, AppConsts.over1100Cols, widget._apiBaseUrl)
       ,
       bottomNavigationBar: MarvelBottomAppBar(),
     );
@@ -96,14 +97,14 @@ class _MarvelScreenState extends State<MarvelScreen> {
       Future.delayed(Duration(milliseconds: 10), () => Provider.of<MarvelCharacters>(context, listen: false).loadPage(context).then((_) async {
         if (
           MediaQuery.of(context).size.width >= 600 && MediaQuery.of(context).size.width < 1100 &&
-          MediaQuery.of(context).size.width / MediaQuery.of(context).size.height < 3 / 5
+          MediaQuery.of(context).size.width / MediaQuery.of(context).size.height < AppConsts.over600Cols / (AppConsts.itemsPerPage / AppConsts.over600Cols)
         ) {
           await Provider.of<MarvelCharacters>(context, listen: false).loadPage(context);
         }
 
         if (
           MediaQuery.of(context).size.width >= 1100 &&
-          MediaQuery.of(context).size.width / MediaQuery.of(context).size.height < 5 / 3
+          MediaQuery.of(context).size.width / MediaQuery.of(context).size.height < AppConsts.over1100Cols / (AppConsts.itemsPerPage / AppConsts.over1100Cols)
         ) {
           await Provider.of<MarvelCharacters>(context, listen: false).loadPage(context);
         }

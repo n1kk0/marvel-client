@@ -4,7 +4,6 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
-import 'package:provider/provider.dart';
 
 import 'package:marvel_client/tools/app_consts.dart';
 import 'package:marvel_client/tools/marvel_api.dart';
@@ -53,7 +52,7 @@ class MarvelCharacters with ChangeNotifier {
       final List<MarvelCharacter> loadedMarvelCharacters = await ApiService(_apiBaseUrl, _client).getMarvelCharacters(_lastPageLoaded, _marvelSeriesFilterId, (int count) => _marvelCharactersQuantity = count);
 
       loadedMarvelCharacters.forEach((MarvelCharacter marvelCharacter) {
-        _imagePreloader(_apiBaseUrl, marvelCharacter);
+        _imagePreloader(marvelCharacter);
       });
 
       _items.addAll(loadedMarvelCharacters);
@@ -64,7 +63,7 @@ class MarvelCharacters with ChangeNotifier {
           thumbnail: "https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/StoryArc/1542/1542._SX400_QL80_TTD_.jpg",
         );
 
-        _imagePreloader(_apiBaseUrl, marvelCharacter);
+        _imagePreloader(marvelCharacter);
         _items.add(marvelCharacter);
         _endReached = true;
       }
@@ -77,8 +76,6 @@ class MarvelCharacters with ChangeNotifier {
   }
 
   Future<Null> _loadingIndicationOn(BuildContext context) async {
-    final MarvelCharacters marvelCharacters = Provider.of<MarvelCharacters>(context, listen: false);
-
     return await showDialog<Null>(
       context: context,
       barrierDismissible: false,
@@ -94,16 +91,16 @@ class MarvelCharacters with ChangeNotifier {
                 children: <Widget>[
                   CircularProgressIndicator(),
                   Text("Loading", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                  marvelCharacters.lastPageLoaded > 0 ?
+                  _lastPageLoaded > 0 ?
                     Text(
-                      "Page ${marvelCharacters.lastPageLoaded + 1} of ${(marvelCharacters.marvelCharactersQuantity / AppConsts.itemsPerPage).ceil()}",
+                      "Page ${_lastPageLoaded + 1} of ${(_marvelCharactersQuantity / AppConsts.itemsPerPage).ceil()}",
                       style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                     ) :
                     Offstage()
                   ,
-                  marvelCharacters.lastPageLoaded > 0 ? 
+                  _lastPageLoaded > 0 ? 
                     Text(
-                        "(Characters ${marvelCharacters.lastPageLoaded * AppConsts.itemsPerPage} to ${(marvelCharacters.lastPageLoaded +1) * AppConsts.itemsPerPage < marvelCharacters.marvelCharactersQuantity ? (marvelCharacters.lastPageLoaded + 1) * AppConsts.itemsPerPage : marvelCharacters.marvelCharactersQuantity} on ${marvelCharacters.marvelCharactersQuantity})",
+                        "(Characters ${_lastPageLoaded * AppConsts.itemsPerPage} to ${(_lastPageLoaded +1) * AppConsts.itemsPerPage < _marvelCharactersQuantity ? (_lastPageLoaded + 1) * AppConsts.itemsPerPage : _marvelCharactersQuantity} on $_marvelCharactersQuantity)",
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)
                       ) :
                       Offstage()
@@ -121,8 +118,8 @@ class MarvelCharacters with ChangeNotifier {
     Navigator.of(context).pop();
   }
 
-  Null _imagePreloader(String apiBaseUrl, MarvelCharacter marvelCharacter) {
-    final Image image = marvelCharacter.getImage("$apiBaseUrl/images?uri=");
+  Null _imagePreloader(MarvelCharacter marvelCharacter) {
+    final Image image = marvelCharacter.getImage("$_apiBaseUrl/images?uri=");
 
     image.image.resolve(ImageConfiguration()).addListener(ImageStreamListener((_, __) {
       marvelCharacter.loaded = true;
