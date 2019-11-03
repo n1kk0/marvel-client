@@ -69,6 +69,7 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: PageView.builder(
         controller: _controller,
+        itemCount: characters.marvelCharactersQuantity,
         onPageChanged: (int index) async {
           final MarvelCharacters characters = Provider.of<MarvelCharacters>(context, listen: false);
 
@@ -79,6 +80,8 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
           }
         },
         itemBuilder: (BuildContext context, int index) {
+          final Size screenSize = MediaQuery.of(context).size;
+
           return GestureDetector(
             onTap: () => Navigator.of(context).pop(),
             child: Center(
@@ -88,13 +91,13 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
                   Hero(
                     tag: "kirbyrulez${characters.items[index].hashCode}",
                     child: characters.items[index].loaded ? CircleAvatar(
-                      radius: screenWidth(context, dividedBy: 2.3) > _screenHeightExcludingToolbar(context, dividedBy: 2.3) ? _screenHeightExcludingToolbar(context, dividedBy: 2.5) : screenWidth(context, dividedBy: 2.5),
+                      radius: screenSize.width > screenSize.height - kToolbarHeight ? (screenSize.height - kToolbarHeight) / 2.5 : screenSize.width / 2.5,
                       backgroundImage: Image.network("${widget._apiBaseUrl}/images?uri=${characters.items[index].thumbnail}").image,
                       backgroundColor: Colors.transparent,
                     ) :
                     Container(
-                      height: screenWidth(context) > _screenHeightExcludingToolbar(context) ? _screenHeightExcludingToolbar(context) : screenWidth(context),
-                      width: screenWidth(context) > _screenHeightExcludingToolbar(context) ? _screenHeightExcludingToolbar(context) : screenWidth(context),
+                      height: screenSize.width > screenSize.height - kToolbarHeight ? screenSize.height - kToolbarHeight : screenSize.width,
+                      width: screenSize.width > screenSize.height - kToolbarHeight ? screenSize.height - kToolbarHeight : screenSize.width,
                       child: CircularProgressIndicator(strokeWidth: 16),
                     ),
                   ),
@@ -114,7 +117,6 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
             ),
           );
         },
-        itemCount: characters.marvelCharactersQuantity,
       ),
       bottomNavigationBar: MarvelBottomAppBar(),
     );
@@ -173,21 +175,5 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
         }
       },
     ) : Offstage();
-  }
-
-  Size _screenSize(BuildContext context) {
-    return MediaQuery.of(context).size;
-  }
-
-  double _screenHeight(BuildContext context, {double dividedBy = 1, double reducedBy = 0.0}) {
-    return (_screenSize(context).height - reducedBy) / dividedBy;
-  }
-
-  double screenWidth(BuildContext context, {double dividedBy = 1, double reducedBy = 0.0}) {
-    return (_screenSize(context).width - reducedBy) / dividedBy;
-  }
-
-  double _screenHeightExcludingToolbar(BuildContext context, {double dividedBy = 1}) {
-    return _screenHeight(context, dividedBy: dividedBy, reducedBy: kToolbarHeight);
   }
 }
