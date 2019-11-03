@@ -1,5 +1,5 @@
 name: marvel_client
-description: Marvel characters paginated display.
+description: Marvel API Client
 version: 1.0.0+42
 
 environment:
