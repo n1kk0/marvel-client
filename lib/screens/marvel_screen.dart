@@ -53,6 +53,7 @@ class _MarvelScreenState extends State<MarvelScreen> {
           if (!_searchFilterActive) {
             _seriesTypeAheadController.text = "";
             Provider.of<MarvelCharacters>(context,listen: false).marvelSeriesFilterId = null;
+            _scrollController.jumpTo(0);
             _initPageLoading();
           }
 
@@ -61,6 +62,7 @@ class _MarvelScreenState extends State<MarvelScreen> {
         onSuggestionSelected: (MarvelSeries marvelSeries) {
           _seriesTypeAheadController.text = marvelSeries.title;
           Provider.of<MarvelCharacters>(context,listen: false).marvelSeriesFilterId = marvelSeries.id;
+          _scrollController.jumpTo(0);
           _initPageLoading();
         },
         client: widget._client,
