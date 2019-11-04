@@ -24,7 +24,15 @@ class MarvelCharacters with ChangeNotifier {
 
   UnmodifiableListView<MarvelCharacter> get items => UnmodifiableListView(_items);
 
-  set marvelSeriesFilterId(int marvelSeriesFilterId) => _marvelSeriesFilterId = marvelSeriesFilterId;
+  set marvelSeriesFilterId(int marvelSeriesFilterId) {
+    _marvelSeriesFilterId = marvelSeriesFilterId;
+    _endReached = false;
+    _items.clear();
+    _marvelCharactersQuantity = null;
+    _lastPageLoaded = 0;
+    notifyListeners();
+  }
+
   set currentHeroId(int currentHeroId) {
     _currentHeroId = currentHeroId;
     notifyListeners();
@@ -36,15 +44,7 @@ class MarvelCharacters with ChangeNotifier {
   int get currentHeroId => _currentHeroId;
   bool get isLoading => _isLoading;
 
-  Future<void> loadPage(BuildContext context, [bool reset = false]) async {
-    if(reset) {
-      _endReached = false;
-      _items.clear();
-      _marvelCharactersQuantity = null;
-      _lastPageLoaded = 0;
-      notifyListeners();
-    }
-
+  Future<void> loadPage(BuildContext context) async {
     if (!_isLoading && !_endReached) {
       _isLoading = true;
       _loadingIndicationOn(context);
