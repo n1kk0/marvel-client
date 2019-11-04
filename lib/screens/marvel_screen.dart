@@ -54,6 +54,7 @@ class _MarvelScreenState extends State<MarvelScreen> {
             _seriesTypeAheadController.text = "";
             Provider.of<MarvelCharacters>(context,listen: false).marvelSeriesFilterId = null;
             _scrollController.jumpTo(0);
+            _loadPageInitialMaxScrollExtent = 0;
             _initPageLoading();
           }
 
@@ -63,6 +64,7 @@ class _MarvelScreenState extends State<MarvelScreen> {
           _seriesTypeAheadController.text = marvelSeries.title;
           Provider.of<MarvelCharacters>(context,listen: false).marvelSeriesFilterId = marvelSeries.id;
           _scrollController.jumpTo(0);
+          _loadPageInitialMaxScrollExtent = 0;
           _initPageLoading();
         },
         client: widget._client,
@@ -97,21 +99,21 @@ class _MarvelScreenState extends State<MarvelScreen> {
     super.dispose();
   }
 
-  Null _initPageLoading() {
+  void _initPageLoading() {
     if (Provider.of<MarvelCharacters>(context, listen: false).lastPageLoaded  == 0) {
-      Future.delayed(Duration(milliseconds: 10), () => Provider.of<MarvelCharacters>(context, listen: false).loadPage(context).then((_) async {
+      Future.delayed(Duration(milliseconds: 10), () => Provider.of<MarvelCharacters>(context, listen: false).loadPage(context).then((_) {
         if (
           MediaQuery.of(context).size.width >= 600 && MediaQuery.of(context).size.width < 1100 &&
           MediaQuery.of(context).size.width / MediaQuery.of(context).size.height < AppConsts.over600Cols / (AppConsts.itemsPerPage / AppConsts.over600Cols)
         ) {
-          await Provider.of<MarvelCharacters>(context, listen: false).loadPage(context);
+          Provider.of<MarvelCharacters>(context, listen: false).loadPage(context);
         }
 
         if (
           MediaQuery.of(context).size.width >= 1100 &&
           MediaQuery.of(context).size.width / MediaQuery.of(context).size.height < AppConsts.over1100Cols / (AppConsts.itemsPerPage / AppConsts.over1100Cols)
         ) {
-          await Provider.of<MarvelCharacters>(context, listen: false).loadPage(context);
+          Provider.of<MarvelCharacters>(context, listen: false).loadPage(context);
         }
       }));
     }
@@ -120,7 +122,8 @@ class _MarvelScreenState extends State<MarvelScreen> {
   Future<void> _scrollListener() async {
     if (
       _loadPageInitialMaxScrollExtent < _scrollController.position.maxScrollExtent &&
-      _scrollController.offset >= _scrollController.position.maxScrollExtent - 50
+      _scrollController.offset >= _scrollController.position.maxScrollExtent - 50 &&
+      !Provider.of<MarvelCharacters>(context, listen: false).isLoading
     ) {
       _loadPageInitialMaxScrollExtent = _scrollController.position.maxScrollExtent;
       await Provider.of<MarvelCharacters>(context, listen: false).loadPage(context);
