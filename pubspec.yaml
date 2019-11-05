@@ -1,6 +1,6 @@
 name: marvel_client
 description: Marvel API Client
-version: 1.0.0+48
+version: 1.0.0+49
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
