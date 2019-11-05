@@ -156,11 +156,10 @@ class _MarvelScreenState extends State<MarvelScreen> {
 
       event.preventDefault();
     } else if (event.code == 'Tab') {
+      Provider.of<MarvelCharacters>(context, listen: false).currentTabulationId += event.shiftKey ? -1 : 1;
+
       _scrollController.scrollToIndex(
-        event.shiftKey ?
-          Provider.of<MarvelCharacters>(context, listen: false).currentTabulationId--:
-          Provider.of<MarvelCharacters>(context, listen: false).currentTabulationId++
-        ,
+        Provider.of<MarvelCharacters>(context, listen: false).currentTabulationId,
         preferPosition: AutoScrollPosition.begin,
       );
 
