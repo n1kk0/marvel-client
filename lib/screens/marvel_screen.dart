@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:universal_html/html.dart' as uh;
+import 'package:scroll_to_index/scroll_to_index.dart';
 
 import 'package:marvel_client/tools/app_consts.dart';
 import 'package:marvel_client/providers/marvel_characters.dart';
 import 'package:marvel_client/models/marvel_series.dart';
+import 'package:marvel_client/screens/marvel_hero_screen.dart';
 import 'package:marvel_client/views/one_col_view.dart';
 import 'package:marvel_client/views/multi_cols_view.dart';
 import 'package:marvel_client/widgets/search_series_appbar.dart';
@@ -22,7 +24,7 @@ class MarvelScreen extends StatefulWidget {
 }
 
 class _MarvelScreenState extends State<MarvelScreen> {
-  final ScrollController _scrollController = ScrollController();
+  final AutoScrollController _scrollController = AutoScrollController();
   final TextEditingController _seriesTypeAheadController = TextEditingController();
   bool _searchFilterActive = false;
   bool _isScrolling = false;
@@ -102,6 +104,8 @@ class _MarvelScreenState extends State<MarvelScreen> {
   void _initPageLoading() {
     if (Provider.of<MarvelCharacters>(context, listen: false).lastPageLoaded  == 0) {
       Future.delayed(Duration(milliseconds: 10), () => Provider.of<MarvelCharacters>(context, listen: false).loadPage(context).then((_) {
+        Provider.of<MarvelCharacters>(context).currentTabulationId = 0;
+
         if (
           MediaQuery.of(context).size.width >= 600 && MediaQuery.of(context).size.width < 1100 &&
           MediaQuery.of(context).size.width / MediaQuery.of(context).size.height < AppConsts.over600Cols / (AppConsts.itemsPerPage / AppConsts.over600Cols)
@@ -149,6 +153,22 @@ class _MarvelScreenState extends State<MarvelScreen> {
         duration: Duration(milliseconds: 500),
         curve: Curves.ease,
       );
+
+      event.preventDefault();
+    } else if (event.code == 'Tab') {
+      _scrollController.scrollToIndex(
+        Provider.of<MarvelCharacters>(context, listen: false).currentTabulationId++,
+        preferPosition: AutoScrollPosition.begin,
+      );
+
+      event.preventDefault();
+    } else if (event.code == 'Space') {
+      final MarvelCharacters characters = Provider.of<MarvelCharacters>(context, listen: false);
+      characters.currentHeroId = characters.currentTabulationId;
+
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (BuildContext context) => MarvelHeroScreen(widget._apiBaseUrl, PageController(initialPage: characters.currentHeroId)),
+      ));
 
       event.preventDefault();
     }

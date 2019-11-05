@@ -16,32 +16,38 @@ class MarvelCharacters with ChangeNotifier {
   int _marvelSeriesFilterId;
   int _marvelCharactersQuantity;
   int _currentHeroId;
+  int _currentTabulationId;
   int _lastPageLoaded = 0;
   bool _isLoading = false;
   bool _endReached = false;
 
   MarvelCharacters(this._client, this._apiBaseUrl);
 
-  UnmodifiableListView<MarvelCharacter> get items => UnmodifiableListView(_items);
-
   set marvelSeriesFilterId(int marvelSeriesFilterId) {
     _marvelSeriesFilterId = marvelSeriesFilterId;
     _endReached = false;
     _items.clear();
     _marvelCharactersQuantity = null;
+    _currentTabulationId = null;
     _lastPageLoaded = 0;
     notifyListeners();
   }
 
   set currentHeroId(int currentHeroId) {
-    _currentHeroId = currentHeroId;
+    _currentHeroId = currentHeroId <= _marvelCharactersQuantity - 1 ? currentHeroId : _currentHeroId;
     notifyListeners();
   }
 
+  set currentTabulationId(int currentTabulationId) {
+    _currentTabulationId = currentTabulationId <= (_lastPageLoaded * AppConsts.itemsPerPage) - 1 ? currentTabulationId : 0;
+    notifyListeners();
+  }
+
+  UnmodifiableListView<MarvelCharacter> get items => UnmodifiableListView(_items);
   int get marvelCharactersQuantity => _marvelCharactersQuantity;
-  List<MarvelCharacter> get characters => _items;
   int get lastPageLoaded => _lastPageLoaded;
   int get currentHeroId => _currentHeroId;
+  int get currentTabulationId => _currentTabulationId;
   bool get isLoading => _isLoading;
 
   Future<void> loadPage(BuildContext context) async {
