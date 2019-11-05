@@ -35,11 +35,21 @@ class MarvelCharacters with ChangeNotifier {
 
   set currentHeroId(int currentHeroId) {
     _currentHeroId = currentHeroId <= _marvelCharactersQuantity - 1 ? currentHeroId : _currentHeroId;
+
+    _currentTabulationId = currentHeroId <= (_lastPageLoaded * AppConsts.itemsPerPage) - 1 ?
+      (currentHeroId >= 0 ? currentHeroId : 0) :
+      (_lastPageLoaded * AppConsts.itemsPerPage) - 1
+    ;
+
     notifyListeners();
   }
 
   set currentTabulationId(int currentTabulationId) {
-    _currentTabulationId = currentTabulationId <= (_lastPageLoaded * AppConsts.itemsPerPage) - 1 ? currentTabulationId : 0;
+    _currentTabulationId = currentTabulationId <= (_lastPageLoaded * AppConsts.itemsPerPage) - 1 ?
+      (currentTabulationId >= 0 ? currentTabulationId : 0) :
+      (_lastPageLoaded * AppConsts.itemsPerPage) - 1
+    ;
+
     notifyListeners();
   }
 
