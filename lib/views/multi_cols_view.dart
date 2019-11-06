@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 
@@ -10,8 +11,9 @@ class MultiColsView extends StatelessWidget {
   final ScrollController _scrollController;
   final String _apiBaseUrl;
   final int _cols;
+  final Client _client;
 
-  MultiColsView(this._scrollController, this._cols, this._apiBaseUrl);
+  MultiColsView(this._scrollController, this._cols, this._apiBaseUrl, this._client);
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +77,7 @@ class MultiColsView extends StatelessWidget {
               characters.currentHeroId = characters.items.indexOf(marvelCharacter);
 
               await Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) => MarvelHeroScreen(_apiBaseUrl, PageController(initialPage: characters.currentHeroId)),
+                builder: (BuildContext context) => MarvelHeroScreen(_apiBaseUrl, PageController(initialPage: characters.currentHeroId), _client),
               ));
             },
           ),

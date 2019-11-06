@@ -83,10 +83,10 @@ class _MarvelScreenState extends State<MarvelScreen> {
           return false;
         },
         child: MediaQuery.of(context).size.width < 600 ?
-          OneColView(_scrollController, widget._apiBaseUrl) :
+          OneColView(_scrollController, widget._apiBaseUrl, widget._client) :
           MediaQuery.of(context).size.width < 1100 ?
-            MultiColsView(_scrollController, AppConsts.over600Cols, widget._apiBaseUrl) :
-            MultiColsView(_scrollController, AppConsts.over1100Cols, widget._apiBaseUrl)
+            MultiColsView(_scrollController, AppConsts.over600Cols, widget._apiBaseUrl, widget._client) :
+            MultiColsView(_scrollController, AppConsts.over1100Cols, widget._apiBaseUrl, widget._client)
         ,
       ),
       bottomNavigationBar: MarvelBottomAppBar(),
@@ -169,7 +169,7 @@ class _MarvelScreenState extends State<MarvelScreen> {
       characters.currentHeroId = characters.currentTabulationId;
 
       Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) => MarvelHeroScreen(widget._apiBaseUrl, PageController(initialPage: characters.currentHeroId)),
+        builder: (BuildContext context) => MarvelHeroScreen(widget._apiBaseUrl, PageController(initialPage: characters.currentHeroId), widget._client),
       ));
 
       event.preventDefault();

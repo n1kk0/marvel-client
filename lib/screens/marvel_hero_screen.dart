@@ -1,18 +1,25 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:universal_html/html.dart' as uh;
 
 import 'package:marvel_client/providers/marvel_characters.dart';
+import 'package:marvel_client/views/hero_home_tab_view.dart';
+import 'package:marvel_client/views/hero_description_tab_view.dart';
+import 'package:marvel_client/views/hero_comics_tab_view.dart';
+import 'package:marvel_client/views/hero_events_tab_view.dart';
+import 'package:marvel_client/views/hero_series_tab_view.dart';
+import 'package:marvel_client/views/hero_stories_tab_view.dart';
 import 'package:marvel_client/widgets/marvel_botton_bar.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class MarvelHeroScreen extends StatefulWidget {
   final String _apiBaseUrl;
   final PageController _controller;
+  final Client _client;
 
-  MarvelHeroScreen(this._apiBaseUrl, this._controller);
+  MarvelHeroScreen(this._apiBaseUrl, this._controller, this._client);
 
   @override
   _MarvelHeroScreenState createState() => _MarvelHeroScreenState();
@@ -112,59 +119,14 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
                     ),
                   ),
                   body: TabBarView(
+                    physics: NeverScrollableScrollPhysics(),
                     children: [
-                      Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Hero(
-                              tag: "kirbyrulez${_characters.items[index].hashCode}",
-                              child: _characters.items[index].loaded ? CircleAvatar(
-                                radius: screenSize.width > screenSize.height - kToolbarHeight * 2 ? (screenSize.height - kToolbarHeight * 2) / 2.5 : screenSize.width / 2.5,
-                                backgroundImage: Image.network("${widget._apiBaseUrl}/images?uri=${_characters.items[index].thumbnail}").image,
-                                backgroundColor: Colors.transparent,
-                              ) :
-                              Container(
-                                height: screenSize.width > screenSize.height - kToolbarHeight * 2 ? screenSize.height - kToolbarHeight * 2 : screenSize.width,
-                                width: screenSize.width > screenSize.height - kToolbarHeight * 2 ? screenSize.height - kToolbarHeight * 2 : screenSize.width,
-                                child: CircularProgressIndicator(strokeWidth: 16),
-                              ),
-                            ),
-                            Text(_characters.items[index].name, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                      ),
-                      Center(
-                        child: Container(
-                          height: screenSize.width > screenSize.height - kToolbarHeight * 4 ? screenSize.height - kToolbarHeight * 4 : screenSize.width,
-                          width: screenSize.width > screenSize.height - kToolbarHeight * 4 ? screenSize.height - kToolbarHeight * 4 : screenSize.width,
-                          child: Column(
-                            children: <Widget>[
-                              Text(_characters.items[index].name, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                              Padding(padding: EdgeInsets.all(20)),
-                              Text(
-                                _characters.items[index].description == "" ? "No description available" : _characters.items[index].description,
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                              ),
-                              Expanded(child: Container()),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  _marvelLinkButton("Detail", _characters.items[index].detailUri),
-                                  Padding(padding: EdgeInsets.all(2)),
-                                  _marvelLinkButton("Wiki", _characters.items[index].wikiUri),
-                                  Padding(padding: EdgeInsets.all(2)),
-                                  _marvelLinkButton("Comics", _characters.items[index].comicsUri),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Center(child: Text("Comics")),
-                      Center(child: Text("Events")),
-                      Center(child: Text("Series")),
-                      Center(child: Text("Stories")),
+                      HeroHomeTabView(_characters.items[index], screenSize, widget._apiBaseUrl),
+                      HeroDescriptionTabView(_characters.items[index], screenSize, kIsWeb),
+                      HeroComicsTabView(_characters.items[index], screenSize, widget._apiBaseUrl, widget._client),
+                      HeroEventsTabView(_characters.items[index], screenSize, widget._apiBaseUrl, widget._client),
+                      HeroSeriesTabView(_characters.items[index], screenSize, widget._apiBaseUrl, widget._client),
+                      HeroStoriesTabView(_characters.items[index], screenSize, widget._apiBaseUrl, widget._client),
                     ],
                   ),
                 ),
@@ -216,25 +178,5 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
       Navigator.of(context).pop();
       event.preventDefault();
     }
-  }
-
-  Widget _marvelLinkButton(String label, String url) {
-    return url != null ? RaisedButton(
-      color: Colors.red,
-      child: Row(
-        children: <Widget>[
-          Text(label, style: TextStyle(color: Theme.of(context).primaryTextTheme.body1.color, fontSize: 16, fontWeight: FontWeight.bold)),
-          Padding(padding: EdgeInsets.all(5)),
-          Icon(Icons.open_in_new, color: Theme.of(context).primaryTextTheme.body1.color, size: 16),
-        ],
-      ),
-      onPressed: () async {
-        if (kIsWeb) {
-          uh.window.open(url, 'marvel');
-        } else {
-          await launch(url);
-        }
-      },
-    ) : Offstage();
   }
 }

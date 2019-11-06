@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 
 import 'package:marvel_client/providers/marvel_characters.dart';
@@ -9,8 +10,9 @@ import 'package:scroll_to_index/scroll_to_index.dart';
 class OneColView extends StatelessWidget {
   final ScrollController _scrollController;
   final String _apiBaseUrl;
+  final Client _client;
 
-  OneColView(this._scrollController, this._apiBaseUrl);
+  OneColView(this._scrollController, this._apiBaseUrl, this._client);
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +53,7 @@ class OneColView extends StatelessWidget {
               characters.currentHeroId = characters.items.indexOf(marvelCharacter);
 
               await Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) => MarvelHeroScreen(_apiBaseUrl, PageController(initialPage: characters.currentHeroId)),
+                builder: (BuildContext context) => MarvelHeroScreen(_apiBaseUrl, PageController(initialPage: characters.currentHeroId), _client),
               ));
             },
           ),

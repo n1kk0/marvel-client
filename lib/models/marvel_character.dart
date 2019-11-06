@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MarvelCharacter {
+  final int id;
   final String name;
   final String thumbnail;
   final String detailUri;
@@ -10,10 +11,11 @@ class MarvelCharacter {
   Image image;
   bool loaded = false;
 
-  MarvelCharacter({this.name, this.thumbnail, this.detailUri, this.wikiUri, this.comicsUri, this.description});
+  MarvelCharacter({this.id, this.name, this.thumbnail, this.detailUri, this.wikiUri, this.comicsUri, this.description});
 
   factory MarvelCharacter.fromJson(Map<String, dynamic> json) {
     return MarvelCharacter(
+      id: int.parse(json["id"].toString()),
       name: json["name"],
       thumbnail: json["thumbnail"],
       detailUri: json["detailUri"],
@@ -29,6 +31,6 @@ class MarvelCharacter {
 
   @override
   String toString() {
-    return "name:$name thumbnail:$thumbnail detailUri:$detailUri wikiUri:$wikiUri comicsUri:$comicsUri description:$description";
+    return "id:$id name:$name thumbnail:$thumbnail detailUri:$detailUri wikiUri:$wikiUri comicsUri:$comicsUri description:$description";
   }
 }
