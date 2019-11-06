@@ -32,9 +32,9 @@ class HeroComicsTabView extends StatelessWidget {
                       leading: item.thumbnail != null ? Image.network("$baseUrl/images?uri=${item.thumbnail}") : Offstage(),
                       title: Text(item.title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                       subtitle: Text(item.description != "null" ? item.description : "", style: TextStyle(fontSize: 15)),
-                      trailing: IconButton(
+                      trailing: item.detailUri == null ? Offstage() : IconButton(
                         icon: Icon(Icons.open_in_new),
-                        onPressed: item.detailUri == null ? null : () async {
+                        onPressed: () async {
                           if (kIsWeb) {
                             uh.window.open(item.detailUri, 'marvel');
                           } else {
