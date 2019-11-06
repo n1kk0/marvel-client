@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:universal_html/html.dart' as uh;
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:marvel_client/models/marvel_character.dart';
 import 'package:marvel_client/models/marvel_character_event.dart';
@@ -10,7 +12,8 @@ class HeroEventsTabView extends StatelessWidget {
   final Size screenSize;
   final String baseUrl;
   final Client client;
-  const HeroEventsTabView(this.character, this.screenSize, this.baseUrl, this.client);
+  final bool kIsWeb;
+  const HeroEventsTabView(this.character, this.screenSize, this.baseUrl, this.client, this.kIsWeb);
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +32,16 @@ class HeroEventsTabView extends StatelessWidget {
                       leading: item.thumbnail != null ? Image.network("$baseUrl/images?uri=${item.thumbnail}") : Offstage(),
                       title: Text(item.title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                       subtitle: Text(item.description != "null" ? item.description : "", style: TextStyle(fontSize: 15)),
-                      trailing: Icon(Icons.open_in_new),
+                      trailing: IconButton(
+                        icon: Icon(Icons.open_in_new),
+                        onPressed: item.detailUri == null ? null : () async {
+                          if (kIsWeb) {
+                            uh.window.open(item.detailUri, 'marvel');
+                          } else {
+                            await launch(item.detailUri);
+                          }
+                        },
+                      ),
                     );
                   }).toList(),
                 ) :
