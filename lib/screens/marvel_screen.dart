@@ -164,7 +164,7 @@ class _MarvelScreenState extends State<MarvelScreen> {
       );
 
       event.preventDefault();
-    } else if (event.code == 'Space') {
+    } else if (event.code == 'Space' || event.code == 'Enter') {
       final MarvelCharacters characters = Provider.of<MarvelCharacters>(context, listen: false);
       characters.currentHeroId = characters.currentTabulationId;
 

@@ -146,7 +146,7 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
   }
 
   void _keydownEventListener(dynamic event) {
-    if (widget._controller.hasClients && event.code == 'ArrowRight') {
+    if (widget._controller.hasClients && (event.code == 'ArrowRight' || (event.code == 'Tab' && event.shiftKey == false))) {
       if (widget._controller.page < _characters.marvelCharactersQuantity && !_characters.isLoading) {
         widget._controller.nextPage(
           duration: Duration(milliseconds: 200),
@@ -155,7 +155,7 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
 
         event.preventDefault();
       }
-    } else if (widget._controller.hasClients && event.code == 'ArrowLeft') {
+    } else if (widget._controller.hasClients && (event.code == 'ArrowLeft' || (event.code == 'Tab' && event.shiftKey == true))) {
       if (widget._controller.page > 0) {
         widget._controller.previousPage(
           duration: Duration(milliseconds: 200),
