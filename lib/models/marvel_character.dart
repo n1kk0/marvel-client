@@ -6,10 +6,11 @@ class MarvelCharacter {
   final String detailUri;
   final String wikiUri;
   final String comicsUri;
+  final String description;
   Image image;
   bool loaded = false;
 
-  MarvelCharacter({this.name, this.thumbnail, this.detailUri, this.wikiUri, this.comicsUri});
+  MarvelCharacter({this.name, this.thumbnail, this.detailUri, this.wikiUri, this.comicsUri, this.description});
 
   factory MarvelCharacter.fromJson(Map<String, dynamic> json) {
     return MarvelCharacter(
@@ -18,6 +19,7 @@ class MarvelCharacter {
       detailUri: json["detailUri"],
       wikiUri: json["wikiUri"],
       comicsUri: json["comicsUri"],
+      description: json["description"],
     );
   }
 
@@ -27,6 +29,6 @@ class MarvelCharacter {
 
   @override
   String toString() {
-    return "name:$name thumbnail:$thumbnail detailUri:$detailUri wikiUri:$wikiUri comicsUri:$comicsUri";
+    return "name:$name thumbnail:$thumbnail detailUri:$detailUri wikiUri:$wikiUri comicsUri:$comicsUri description:$description";
   }
 }

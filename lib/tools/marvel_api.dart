@@ -38,11 +38,11 @@ class ApiService {
       print("REQUEST URL:$url");
       response =  await _client.get("$url");
       _cache[url] = response;
-      print("RESPONSE STATUS_CODE:${response.statusCode} BODY:${response.body}");
+      print("RESPONSE STATUS_CODE:${response.statusCode} BODY:${response.body.substring(0, 300)}");
     } else {
       print("RETREIVE CACHED URL:$url");
       response = _cache[url];
-      print("CACHE STATUS_CODE:${response.statusCode} BODY:${response.body}");
+      print("CACHE STATUS_CODE:${response.statusCode} BODY:${response.body.substring(0, 300)}");
     }
 
     return response;

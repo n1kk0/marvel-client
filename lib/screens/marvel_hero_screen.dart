@@ -88,43 +88,90 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
 
           return Stack(
             children: <Widget>[
-              GestureDetector(
-                onTap: () => Navigator.of(context).pop(),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Hero(
-                        tag: "kirbyrulez${_characters.items[index].hashCode}",
-                        child: _characters.items[index].loaded ? CircleAvatar(
-                          radius: screenSize.width > screenSize.height - kToolbarHeight ? (screenSize.height - kToolbarHeight) / 2.5 : screenSize.width / 2.5,
-                          backgroundImage: Image.network("${widget._apiBaseUrl}/images?uri=${_characters.items[index].thumbnail}").image,
-                          backgroundColor: Colors.transparent,
-                        ) :
-                        Container(
-                          height: screenSize.width > screenSize.height - kToolbarHeight ? screenSize.height - kToolbarHeight : screenSize.width,
-                          width: screenSize.width > screenSize.height - kToolbarHeight ? screenSize.height - kToolbarHeight : screenSize.width,
-                          child: CircularProgressIndicator(strokeWidth: 16),
+              DefaultTabController(
+                length: 6,
+                child: Scaffold(
+                  appBar: PreferredSize(
+                    preferredSize: Size.fromHeight(kToolbarHeight),
+                    child: Container(
+                      child: SafeArea(
+                        child: TabBar(
+                          indicatorColor: Colors.red,
+                          labelColor: Colors.red,
+                          unselectedLabelColor: Colors.redAccent,
+                          tabs: [
+                            Tab(child: Icon(Icons.home)),
+                            Tab(child: Icon(Icons.description)),
+                            Tab(child: Text("Comics", style: TextStyle(fontWeight: FontWeight.bold))),
+                            Tab(child: Text("Events", style: TextStyle(fontWeight: FontWeight.bold))),
+                            Tab(child: Text("Series", style: TextStyle(fontWeight: FontWeight.bold))),
+                            Tab(child: Text("Stories", style: TextStyle(fontWeight: FontWeight.bold))),
+                          ],
                         ),
                       ),
-                      Text(_characters.items[index].name, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          _marvelLinkButton("Detail", _characters.items[index].detailUri),
-                          Padding(padding: EdgeInsets.all(2)),
-                          _marvelLinkButton("Wiki", _characters.items[index].wikiUri),
-                          Padding(padding: EdgeInsets.all(2)),
-                          _marvelLinkButton("Comics", _characters.items[index].comicsUri),
-                        ],
-                      )
+                    ),
+                  ),
+                  body: TabBarView(
+                    children: [
+                      Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Hero(
+                              tag: "kirbyrulez${_characters.items[index].hashCode}",
+                              child: _characters.items[index].loaded ? CircleAvatar(
+                                radius: screenSize.width > screenSize.height - kToolbarHeight * 2 ? (screenSize.height - kToolbarHeight * 2) / 2.5 : screenSize.width / 2.5,
+                                backgroundImage: Image.network("${widget._apiBaseUrl}/images?uri=${_characters.items[index].thumbnail}").image,
+                                backgroundColor: Colors.transparent,
+                              ) :
+                              Container(
+                                height: screenSize.width > screenSize.height - kToolbarHeight * 2 ? screenSize.height - kToolbarHeight * 2 : screenSize.width,
+                                width: screenSize.width > screenSize.height - kToolbarHeight * 2 ? screenSize.height - kToolbarHeight * 2 : screenSize.width,
+                                child: CircularProgressIndicator(strokeWidth: 16),
+                              ),
+                            ),
+                            Text(_characters.items[index].name, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+                      Center(
+                        child: Container(
+                          height: screenSize.width > screenSize.height - kToolbarHeight * 4 ? screenSize.height - kToolbarHeight * 4 : screenSize.width,
+                          width: screenSize.width > screenSize.height - kToolbarHeight * 4 ? screenSize.height - kToolbarHeight * 4 : screenSize.width,
+                          child: Column(
+                            children: <Widget>[
+                              Text(_characters.items[index].name, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                              Padding(padding: EdgeInsets.all(20)),
+                              Text(
+                                _characters.items[index].description == "" ? "No description available" : _characters.items[index].description,
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                              Expanded(child: Container()),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  _marvelLinkButton("Detail", _characters.items[index].detailUri),
+                                  Padding(padding: EdgeInsets.all(2)),
+                                  _marvelLinkButton("Wiki", _characters.items[index].wikiUri),
+                                  Padding(padding: EdgeInsets.all(2)),
+                                  _marvelLinkButton("Comics", _characters.items[index].comicsUri),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Center(child: Text("Comics")),
+                      Center(child: Text("Events")),
+                      Center(child: Text("Series")),
+                      Center(child: Text("Stories")),
                     ],
                   ),
                 ),
               ),
               Positioned(
-                right: 30.0,
-                top: 30.0,
+                right: 10.0,
+                top: 50.0,
                 child: IconButton(
                   icon: Icon(Icons.close),
                   onPressed: () => Navigator.of(context).pop(),
