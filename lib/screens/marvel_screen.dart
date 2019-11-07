@@ -95,8 +95,8 @@ class _MarvelScreenState extends State<MarvelScreen> {
 
   @override
   void dispose() {
-    _scrollController.dispose();
-    _seriesTypeAheadController.dispose();
+    _scrollController?.dispose();
+    _seriesTypeAheadController?.dispose();
     uh.document.removeEventListener('keydown', _keydownEventListener);
     super.dispose();
   }

@@ -16,22 +16,24 @@ import 'package:marvel_client/widgets/marvel_botton_bar.dart';
 
 class MarvelHeroScreen extends StatefulWidget {
   final String _apiBaseUrl;
-  final PageController _controller;
+  final PageController _pageController;
   final Client _client;
 
-  MarvelHeroScreen(this._apiBaseUrl, this._controller, this._client);
+  MarvelHeroScreen(this._apiBaseUrl, this._pageController, this._client);
 
   @override
   _MarvelHeroScreenState createState() => _MarvelHeroScreenState();
 }
 
-class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
+class _MarvelHeroScreenState extends State<MarvelHeroScreen> with TickerProviderStateMixin {
   bool _popped = false;
   MarvelCharacters _characters;
+  TabController _tabController;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 6, vsync: this); 
 
     if (kIsWeb) {
       uh.document.addEventListener('keydown', _keydownEventListener);
@@ -52,8 +54,8 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
                 icon: Icon(Icons.keyboard_arrow_left),
                 color: Colors.red,
                 onPressed: () {
-                  if (widget._controller.page > 0) {
-                    widget._controller.previousPage(
+                  if (widget._pageController.page > 0) {
+                    widget._pageController.previousPage(
                       duration: Duration(milliseconds: 200),
                       curve: Curves.ease,
                     );
@@ -65,8 +67,8 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
                 icon: Icon(Icons.keyboard_arrow_right),
                 color: Colors.red,
                 onPressed: () {
-                  if (widget._controller.page < _characters.marvelCharactersQuantity) {
-                    widget._controller.nextPage(
+                  if (widget._pageController.page < _characters.marvelCharactersQuantity) {
+                    widget._pageController.nextPage(
                       duration: Duration(milliseconds: 200),
                       curve: Curves.ease,
                     );
@@ -79,7 +81,7 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: PageView.builder(
-        controller: widget._controller,
+        controller: widget._pageController,
         itemCount: _characters.marvelCharactersQuantity,
         onPageChanged: (int index) async {
           final MarvelCharacters characters = Provider.of<MarvelCharacters>(context, listen: false);
@@ -95,40 +97,39 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
 
           return Stack(
             children: <Widget>[
-              DefaultTabController(
-                length: 6,
-                child: Scaffold(
-                  appBar: PreferredSize(
-                    preferredSize: Size.fromHeight(kToolbarHeight),
-                    child: Container(
-                      child: SafeArea(
-                        child: TabBar(
-                          indicatorColor: Colors.red,
-                          labelColor: Colors.red,
-                          unselectedLabelColor: Colors.redAccent,
-                          tabs: [
-                            Tab(child: Icon(Icons.home)),
-                            Tab(child: Icon(Icons.description)),
-                            Tab(child: Text("Comics", style: TextStyle(fontWeight: FontWeight.bold))),
-                            Tab(child: Text("Events", style: TextStyle(fontWeight: FontWeight.bold))),
-                            Tab(child: Text("Series", style: TextStyle(fontWeight: FontWeight.bold))),
-                            Tab(child: Text("Stories", style: TextStyle(fontWeight: FontWeight.bold))),
-                          ],
-                        ),
+              Scaffold(
+                appBar: PreferredSize(
+                  preferredSize: Size.fromHeight(kToolbarHeight),
+                  child: Container(
+                    child: SafeArea(
+                      child: TabBar(
+                        controller: _tabController,
+                        indicatorColor: Colors.red,
+                        labelColor: Colors.red,
+                        unselectedLabelColor: Colors.redAccent,
+                        tabs: [
+                          Tab(child: Icon(Icons.home)),
+                          Tab(child: Icon(Icons.description)),
+                          Tab(child: Text("Comics", style: TextStyle(fontWeight: FontWeight.bold))),
+                          Tab(child: Text("Events", style: TextStyle(fontWeight: FontWeight.bold))),
+                          Tab(child: Text("Series", style: TextStyle(fontWeight: FontWeight.bold))),
+                          Tab(child: Text("Stories", style: TextStyle(fontWeight: FontWeight.bold))),
+                        ],
                       ),
                     ),
                   ),
-                  body: TabBarView(
-                    physics: NeverScrollableScrollPhysics(),
-                    children: [
-                      HeroHomeTabView(_characters.items[index], screenSize, widget._apiBaseUrl),
-                      HeroDescriptionTabView(_characters.items[index], screenSize, kIsWeb),
-                      HeroComicsTabView(_characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
-                      HeroEventsTabView(_characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
-                      HeroSeriesTabView(_characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
-                      HeroStoriesTabView(_characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
-                    ],
-                  ),
+                ),
+                body: TabBarView(
+                  controller: _tabController,
+                  physics: NeverScrollableScrollPhysics(),
+                  children: [
+                    HeroHomeTabView(_characters.items[index], screenSize, widget._apiBaseUrl),
+                    HeroDescriptionTabView(_characters.items[index], screenSize, kIsWeb),
+                    HeroComicsTabView(_characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
+                    HeroEventsTabView(_characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
+                    HeroSeriesTabView(_characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
+                    HeroStoriesTabView(_characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
+                  ],
                 ),
               ),
               Positioned(
@@ -149,24 +150,24 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
 
   @override
   void dispose() {
-    widget._controller.dispose();
+    _tabController?.dispose();
     uh.document.removeEventListener('keydown', _keydownEventListener);
     super.dispose();
   }
 
   void _keydownEventListener(dynamic event) {
-    if (widget._controller.hasClients && (event.code == 'ArrowRight' || (event.code == 'Tab' && event.shiftKey == false))) {
-      if (widget._controller.page < _characters.marvelCharactersQuantity && !_characters.isLoading) {
-        widget._controller.nextPage(
+    if (widget._pageController.hasClients && (event.code == 'ArrowRight' || (event.code == 'Tab' && event.shiftKey == false))) {
+      if (widget._pageController.page < _characters.marvelCharactersQuantity && !_characters.isLoading) {
+        widget._pageController.nextPage(
           duration: Duration(milliseconds: 200),
           curve: Curves.ease,
         );
 
         event.preventDefault();
       }
-    } else if (widget._controller.hasClients && (event.code == 'ArrowLeft' || (event.code == 'Tab' && event.shiftKey == true))) {
-      if (widget._controller.page > 0) {
-        widget._controller.previousPage(
+    } else if (widget._pageController.hasClients && (event.code == 'ArrowLeft' || (event.code == 'Tab' && event.shiftKey == true))) {
+      if (widget._pageController.page > 0) {
+        widget._pageController.previousPage(
           duration: Duration(milliseconds: 200),
           curve: Curves.ease,
         );
@@ -176,6 +177,24 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> {
     } else if (event.code == 'Escape' && !_popped) {
       _popped = true;
       Navigator.of(context).pop();
+      event.preventDefault();
+    } else if (event.code == "Digit1") {
+      _tabController.animateTo(0);
+      event.preventDefault();
+    } else if (event.code == "Digit2") {
+      _tabController.animateTo(1);
+      event.preventDefault();
+    } else if (event.code == "Digit3") {
+      _tabController.animateTo(2);
+      event.preventDefault();
+    } else if (event.code == "Digit4") {
+      _tabController.animateTo(3);
+      event.preventDefault();
+    } else if (event.code == "Digit5") {
+      _tabController.animateTo(4);
+      event.preventDefault();
+    } else if (event.code == "Digit6") {
+      _tabController.animateTo(5);
       event.preventDefault();
     }
   }
