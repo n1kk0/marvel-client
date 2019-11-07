@@ -1,14 +1,14 @@
-class MarvelCharacterSeries {
+class MarvelCharacterItem {
   int id;
   String title;
   String thumbnail;
   String description;
   String detailUri;
 
-  MarvelCharacterSeries({this.id, this.title, this.thumbnail, this.description, this.detailUri});
+  MarvelCharacterItem({this.id, this.title, this.thumbnail, this.description, this.detailUri});
 
-  factory MarvelCharacterSeries.fromJson(Map<String, dynamic> json) {
-    return MarvelCharacterSeries(
+  factory MarvelCharacterItem.fromJson(Map<String, dynamic> json) {
+    return MarvelCharacterItem(
       id: int.parse(json["id"].toString()),
       title: json["title"],
       thumbnail: json["thumbnail"],

@@ -4,19 +4,21 @@ import 'package:universal_html/html.dart' as uh;
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:marvel_client/data/models/marvel_character.dart';
-import 'package:marvel_client/data/models/marvel_character_series.dart';
+import 'package:marvel_client/data/models/marvel_character_item.dart';
 import 'package:marvel_client/data/sources/marvel_api.dart';
 
-class HeroSeriesTabView extends StatelessWidget {
+class HeroListTabView extends StatelessWidget {
+  final String type; 
   final MarvelCharacter character;
   final Size screenSize;
   final String baseUrl;
   final Client client;
   final bool kIsWeb;
-  const HeroSeriesTabView(this.character, this.screenSize, this.baseUrl, this.client, this.kIsWeb);
+  const HeroListTabView(this.type, this.character, this.screenSize, this.baseUrl, this.client, this.kIsWeb);
 
   @override
   Widget build(BuildContext context) {
+
     return Column(
       children: <Widget>[
         Padding(padding: EdgeInsets.all(5)),
@@ -26,13 +28,16 @@ class HeroSeriesTabView extends StatelessWidget {
           height: MediaQuery.of(context).size.height - 150,
           width: MediaQuery.of(context).size.width,
           child: FutureBuilder(
-            future: ApiService(baseUrl, client).getMarvelCharacterSeries(character.id),
-            builder: (BuildContext context, AsyncSnapshot<List<MarvelCharacterSeries>> snapshot) {
+            future: ApiService(baseUrl, client).getMarvelCharacterItems(type, character.id),
+            builder: (BuildContext context, AsyncSnapshot<List<MarvelCharacterItem>> snapshot) {
               return snapshot.connectionState == ConnectionState.done ?
                 snapshot.hasData ?
                   ListView(
-                    children: snapshot.data.map((MarvelCharacterSeries item) {
+                    padding: EdgeInsets.all(10),
+                    children: snapshot.data.map((MarvelCharacterItem item) {
                       return ListTile(
+                        isThreeLine: true,
+                        contentPadding: EdgeInsets.all(10),
                         leading: item.thumbnail != null ? Image.network("$baseUrl/images?uri=${item.thumbnail}") : Offstage(),
                         title: Text(item.title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                         subtitle: Text(item.description != "null" ? item.description : "", style: TextStyle(fontSize: 15)),

@@ -8,10 +8,7 @@ import 'package:universal_html/html.dart' as uh;
 import 'package:marvel_client/data/providers/marvel_characters.dart';
 import 'package:marvel_client/screens/views/hero_home_tab_view.dart';
 import 'package:marvel_client/screens/views/hero_description_tab_view.dart';
-import 'package:marvel_client/screens/views/hero_comics_tab_view.dart';
-import 'package:marvel_client/screens/views/hero_events_tab_view.dart';
-import 'package:marvel_client/screens/views/hero_series_tab_view.dart';
-import 'package:marvel_client/screens/views/hero_stories_tab_view.dart';
+import 'package:marvel_client/screens/views/hero_list_tab_view.dart';
 
 class MarvelHeroScreen extends StatefulWidget {
   final String _apiBaseUrl;
@@ -124,10 +121,10 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> with TickerProvider
                   children: [
                     HeroHomeTabView(_characters.items[index], screenSize, widget._apiBaseUrl),
                     HeroDescriptionTabView(_characters.items[index], screenSize, kIsWeb),
-                    HeroComicsTabView(_characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
-                    HeroEventsTabView(_characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
-                    HeroSeriesTabView(_characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
-                    HeroStoriesTabView(_characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
+                    HeroListTabView("comics", _characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
+                    HeroListTabView("events", _characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
+                    HeroListTabView("series", _characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
+                    HeroListTabView("stories", _characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
                   ],
                 ),
               ),
