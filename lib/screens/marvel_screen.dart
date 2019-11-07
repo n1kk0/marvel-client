@@ -6,13 +6,13 @@ import 'package:universal_html/html.dart' as uh;
 import 'package:scroll_to_index/scroll_to_index.dart';
 
 import 'package:marvel_client/tools/app_consts.dart';
-import 'package:marvel_client/providers/marvel_characters.dart';
-import 'package:marvel_client/models/marvel_series.dart';
+import 'package:marvel_client/data/providers/marvel_characters.dart';
+import 'package:marvel_client/data/models/marvel_series.dart';
 import 'package:marvel_client/screens/marvel_hero_screen.dart';
-import 'package:marvel_client/views/one_col_view.dart';
-import 'package:marvel_client/views/multi_cols_view.dart';
-import 'package:marvel_client/widgets/search_series_appbar.dart';
-import 'package:marvel_client/widgets/marvel_botton_bar.dart';
+import 'package:marvel_client/screens/views/one_col_view.dart';
+import 'package:marvel_client/screens/views/multi_cols_view.dart';
+import 'package:marvel_client/screens/widgets/search_series_appbar.dart';
+import 'package:marvel_client/screens/widgets/marvel_botton_bar.dart';
 
 class MarvelScreen extends StatefulWidget {
   final Client _client;

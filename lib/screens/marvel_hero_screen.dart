@@ -5,14 +5,13 @@ import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:universal_html/html.dart' as uh;
 
-import 'package:marvel_client/providers/marvel_characters.dart';
-import 'package:marvel_client/views/hero_home_tab_view.dart';
-import 'package:marvel_client/views/hero_description_tab_view.dart';
-import 'package:marvel_client/views/hero_comics_tab_view.dart';
-import 'package:marvel_client/views/hero_events_tab_view.dart';
-import 'package:marvel_client/views/hero_series_tab_view.dart';
-import 'package:marvel_client/views/hero_stories_tab_view.dart';
-import 'package:marvel_client/widgets/marvel_botton_bar.dart';
+import 'package:marvel_client/data/providers/marvel_characters.dart';
+import 'package:marvel_client/screens/views/hero_home_tab_view.dart';
+import 'package:marvel_client/screens/views/hero_description_tab_view.dart';
+import 'package:marvel_client/screens/views/hero_comics_tab_view.dart';
+import 'package:marvel_client/screens/views/hero_events_tab_view.dart';
+import 'package:marvel_client/screens/views/hero_series_tab_view.dart';
+import 'package:marvel_client/screens/views/hero_stories_tab_view.dart';
 
 class MarvelHeroScreen extends StatefulWidget {
   final String _apiBaseUrl;
@@ -45,7 +44,7 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> with TickerProvider
     if (_characters == null) _characters = Provider.of<MarvelCharacters>(context);
 
     return Scaffold(
-      floatingActionButton: Consumer<MarvelCharacters>(
+      bottomNavigationBar: Consumer<MarvelCharacters>(
         builder: (BuildContext context, MarvelCharacters marvelCharacters, _) {
           return Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -79,7 +78,7 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> with TickerProvider
           );
         },
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       body: PageView.builder(
         controller: widget._pageController,
         itemCount: _characters.marvelCharactersQuantity,
@@ -144,7 +143,6 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> with TickerProvider
           );
         },
       ),
-      bottomNavigationBar: MarvelBottomAppBar(),
     );
   }
 

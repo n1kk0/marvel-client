@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 
-import 'package:marvel_client/providers/marvel_characters.dart';
+import 'package:marvel_client/data/providers/marvel_characters.dart';
 import 'package:marvel_client/screens/marvel_screen.dart';
 
 class MyMaterialApp extends StatelessWidget {

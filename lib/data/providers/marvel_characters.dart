@@ -6,8 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
 import 'package:marvel_client/tools/app_consts.dart';
-import 'package:marvel_client/tools/marvel_api.dart';
-import 'package:marvel_client/models/marvel_character.dart';
+import 'package:marvel_client/data/sources/marvel_api.dart';
+import 'package:marvel_client/data/models/marvel_character.dart';
 
 class MarvelCharacters with ChangeNotifier {
   final Client _client;

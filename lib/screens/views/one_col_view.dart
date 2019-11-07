@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 
-import 'package:marvel_client/providers/marvel_characters.dart';
-import 'package:marvel_client/models/marvel_character.dart';
+import 'package:marvel_client/data/providers/marvel_characters.dart';
+import 'package:marvel_client/data/models/marvel_character.dart';
 import 'package:marvel_client/screens/marvel_hero_screen.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 

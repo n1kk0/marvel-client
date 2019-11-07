@@ -3,12 +3,12 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 
-import 'package:marvel_client/models/marvel_character.dart';
-import 'package:marvel_client/models/marvel_character_comic.dart';
-import 'package:marvel_client/models/marvel_character_event.dart';
-import 'package:marvel_client/models/marvel_character_series.dart';
-import 'package:marvel_client/models/marvel_character_story.dart';
-import 'package:marvel_client/models/marvel_series.dart';
+import 'package:marvel_client/data/models/marvel_character.dart';
+import 'package:marvel_client/data/models/marvel_character_comic.dart';
+import 'package:marvel_client/data/models/marvel_character_event.dart';
+import 'package:marvel_client/data/models/marvel_character_series.dart';
+import 'package:marvel_client/data/models/marvel_character_story.dart';
+import 'package:marvel_client/data/models/marvel_series.dart';
 
 class ApiService {
   final String _baseUrl;
