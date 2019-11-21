@@ -14,8 +14,9 @@ class MarvelHeroScreen extends StatefulWidget {
   final String _apiBaseUrl;
   final PageController _pageController;
   final Client _client;
+  final Function _keydownParentEventListener;
 
-  MarvelHeroScreen(this._apiBaseUrl, this._pageController, this._client);
+  MarvelHeroScreen(this._apiBaseUrl, this._pageController, this._client, this._keydownParentEventListener);
 
   @override
   _MarvelHeroScreenState createState() => _MarvelHeroScreenState();
@@ -29,10 +30,11 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> with TickerProvider
   @override
   void initState() {
     super.initState();
+
     _tabController = TabController(length: 6, vsync: this); 
 
     if (kIsWeb) {
-      uh.document.addEventListener('keydown', _keydownEventListener);
+      uh.window.addEventListener('keydown', _keydownEventListener);
     }
   }
 
@@ -106,10 +108,10 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> with TickerProvider
                         tabs: [
                           Tab(child: Icon(Icons.home)),
                           Tab(child: Icon(Icons.description)),
-                          Tab(child: Text("Comics", style: TextStyle(fontWeight: FontWeight.bold))),
-                          Tab(child: Text("Events", style: TextStyle(fontWeight: FontWeight.bold))),
-                          Tab(child: Text("Series", style: TextStyle(fontWeight: FontWeight.bold))),
-                          Tab(child: Text("Stories", style: TextStyle(fontWeight: FontWeight.bold))),
+                          Tab(child: Icon(Icons.book)),
+                          Tab(child: Icon(Icons.event)),
+                          Tab(child: Icon(Icons.list)),
+                          Tab(child: Icon(Icons.wallpaper)),
                         ],
                       ),
                     ),
@@ -121,10 +123,10 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> with TickerProvider
                   children: [
                     HeroHomeTabView(_characters.items[index], screenSize, widget._apiBaseUrl),
                     HeroDescriptionTabView(_characters.items[index], screenSize, kIsWeb),
-                    HeroListTabView("comics", _characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
-                    HeroListTabView("events", _characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
-                    HeroListTabView("series", _characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
-                    HeroListTabView("stories", _characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
+                    new HeroListTabView("comics", _characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
+                    new HeroListTabView("events", _characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
+                    new HeroListTabView("series", _characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
+                    new HeroListTabView("stories", _characters.items[index], screenSize, widget._apiBaseUrl, widget._client, kIsWeb),
                   ],
                 ),
               ),
@@ -145,52 +147,58 @@ class _MarvelHeroScreenState extends State<MarvelHeroScreen> with TickerProvider
 
   @override
   void dispose() {
-    _tabController?.dispose();
-    uh.document.removeEventListener('keydown', _keydownEventListener);
     super.dispose();
+    _tabController?.dispose();
+
+    if (kIsWeb) {
+      uh.window.removeEventListener('keydown', _keydownEventListener);
+      uh.window.addEventListener('keydown', widget._keydownParentEventListener);
+    }
   }
 
   void _keydownEventListener(dynamic event) {
-    if (widget._pageController.hasClients && (event.code == 'ArrowRight' || (event.code == 'Tab' && event.shiftKey == false))) {
-      if (widget._pageController.page < _characters.marvelCharactersQuantity && !_characters.isLoading) {
-        widget._pageController.nextPage(
-          duration: Duration(milliseconds: 200),
-          curve: Curves.ease,
-        );
+    if (event is uh.KeyboardEvent) {
+      if (widget._pageController.hasClients && (event.code == 'ArrowRight' || (event.code == 'Tab' && event.shiftKey == false))) {
+        if (widget._pageController.page < _characters.marvelCharactersQuantity && !_characters.isLoading) {
+          widget._pageController.nextPage(
+            duration: Duration(milliseconds: 200),
+            curve: Curves.ease,
+          );
 
+          event.preventDefault();
+        }
+      } else if (widget._pageController.hasClients && (event.code == 'ArrowLeft' || (event.code == 'Tab' && event.shiftKey == true))) {
+        if (widget._pageController.page > 0) {
+          widget._pageController.previousPage(
+            duration: Duration(milliseconds: 200),
+            curve: Curves.ease,
+          );
+
+          event.preventDefault();
+        }
+      } else if (event.code == 'Escape' && !_popped) {
+        _popped = true;
+        Navigator.of(context).pop();
+        event.preventDefault();
+      } else if (event.code == "Digit1") {
+        _tabController.animateTo(0);
+        event.preventDefault();
+      } else if (event.code == "Digit2") {
+        _tabController.animateTo(1);
+        event.preventDefault();
+      } else if (event.code == "Digit3") {
+        _tabController.animateTo(2);
+        event.preventDefault();
+      } else if (event.code == "Digit4") {
+        _tabController.animateTo(3);
+        event.preventDefault();
+      } else if (event.code == "Digit5") {
+        _tabController.animateTo(4);
+        event.preventDefault();
+      } else if (event.code == "Digit6") {
+        _tabController.animateTo(5);
         event.preventDefault();
       }
-    } else if (widget._pageController.hasClients && (event.code == 'ArrowLeft' || (event.code == 'Tab' && event.shiftKey == true))) {
-      if (widget._pageController.page > 0) {
-        widget._pageController.previousPage(
-          duration: Duration(milliseconds: 200),
-          curve: Curves.ease,
-        );
-
-        event.preventDefault();
-      }
-    } else if (event.code == 'Escape' && !_popped) {
-      _popped = true;
-      Navigator.of(context).pop();
-      event.preventDefault();
-    } else if (event.code == "Digit1") {
-      _tabController.animateTo(0);
-      event.preventDefault();
-    } else if (event.code == "Digit2") {
-      _tabController.animateTo(1);
-      event.preventDefault();
-    } else if (event.code == "Digit3") {
-      _tabController.animateTo(2);
-      event.preventDefault();
-    } else if (event.code == "Digit4") {
-      _tabController.animateTo(3);
-      event.preventDefault();
-    } else if (event.code == "Digit5") {
-      _tabController.animateTo(4);
-      event.preventDefault();
-    } else if (event.code == "Digit6") {
-      _tabController.animateTo(5);
-      event.preventDefault();
     }
   }
 }

@@ -16,6 +16,8 @@ class HeroHomeTabView extends StatelessWidget {
         Padding(padding: EdgeInsets.all(5)),
         Text(character.name, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
         Padding(padding: EdgeInsets.all(5)),
+        Text("Home", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+        Padding(padding: EdgeInsets.all(5)),
         Hero(
           tag: "kirbyrulez${character.hashCode}",
           child: character.loaded ? CircleAvatar(

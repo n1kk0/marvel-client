@@ -37,7 +37,7 @@ class _MarvelScreenState extends State<MarvelScreen> {
     _scrollController.addListener(_scrollListener);
 
     if (kIsWeb) {
-      uh.document.addEventListener('keydown', _keydownEventListener);
+      uh.window.addEventListener('keydown', _keydownEventListener);
     }
   }
 
@@ -49,6 +49,8 @@ class _MarvelScreenState extends State<MarvelScreen> {
       appBar: SearchSeriesAppBar(
         seriesTypeAheadController: _seriesTypeAheadController,
         searchFilterActive: _searchFilterActive,
+        client: widget._client,
+        apiBaseUrl: widget._apiBaseUrl,
         openSeriesSearch: () {
           _searchFilterActive = !_searchFilterActive;
 
@@ -69,8 +71,6 @@ class _MarvelScreenState extends State<MarvelScreen> {
           _loadPageInitialMaxScrollExtent = 0;
           _initPageLoading();
         },
-        client: widget._client,
-        apiBaseUrl: widget._apiBaseUrl,
       ),
       body: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollNotification) {
@@ -83,10 +83,10 @@ class _MarvelScreenState extends State<MarvelScreen> {
           return false;
         },
         child: MediaQuery.of(context).size.width < 600 ?
-          OneColView(_scrollController, widget._apiBaseUrl, widget._client) :
+          OneColView(_scrollController, widget._apiBaseUrl, widget._client, _keydownEventListener, kIsWeb) :
           MediaQuery.of(context).size.width < 1100 ?
-            MultiColsView(_scrollController, AppConsts.over600Cols, widget._apiBaseUrl, widget._client) :
-            MultiColsView(_scrollController, AppConsts.over1100Cols, widget._apiBaseUrl, widget._client)
+            MultiColsView(_scrollController, AppConsts.over600Cols, widget._apiBaseUrl, widget._client, _keydownEventListener, kIsWeb) :
+            MultiColsView(_scrollController, AppConsts.over1100Cols, widget._apiBaseUrl, widget._client, _keydownEventListener, kIsWeb)
         ,
       ),
       bottomNavigationBar: MarvelBottomAppBar(),
@@ -95,10 +95,13 @@ class _MarvelScreenState extends State<MarvelScreen> {
 
   @override
   void dispose() {
+    super.dispose();
     _scrollController?.dispose();
     _seriesTypeAheadController?.dispose();
-    uh.document.removeEventListener('keydown', _keydownEventListener);
-    super.dispose();
+
+    if (kIsWeb) {
+      uh.window.removeEventListener('keydown', _keydownEventListener);
+    }
   }
 
   void _initPageLoading() {
@@ -135,44 +138,50 @@ class _MarvelScreenState extends State<MarvelScreen> {
   }
 
   void _keydownEventListener(dynamic event) {
-    if (event.code == 'ArrowDown' && !_isScrolling) {
-      if (_scrollController.offset >= _scrollController.position.maxScrollExtent - _scrollController.position.viewportDimension) {
-        Provider.of<MarvelCharacters>(context, listen: false).loadPage(context);
+    if (event is uh.KeyboardEvent) {
+      if (event.code == 'ArrowDown' && !event.shiftKey && !_isScrolling) {
+        if (_scrollController.offset >= _scrollController.position.maxScrollExtent - _scrollController.position.viewportDimension) {
+          Provider.of<MarvelCharacters>(context, listen: false).loadPage(context);
+        }
+
+        _scrollController.animateTo(
+          _scrollController.offset + _scrollController.position.viewportDimension,
+          duration: Duration(milliseconds: 500),
+          curve: Curves.ease,
+        );
+
+        event.preventDefault();
+      } else if (event.code == 'ArrowUp' && !event.shiftKey && !_isScrolling) {
+        _scrollController.animateTo(
+          _scrollController.offset < _scrollController.position.viewportDimension ? 0 : _scrollController.offset - _scrollController.position.viewportDimension,
+          duration: Duration(milliseconds: 500),
+          curve: Curves.ease,
+        );
+
+        event.preventDefault();
+      } else if (event.code == 'Tab') {
+        Provider.of<MarvelCharacters>(context, listen: false).currentTabulationId += event.shiftKey ? -1 : 1;
+
+        _scrollController.scrollToIndex(
+          Provider.of<MarvelCharacters>(context, listen: false).currentTabulationId,
+          preferPosition: AutoScrollPosition.begin,
+        );
+
+        event.preventDefault();
+      } else if (event.code == 'Space' || event.code == 'Enter') {
+        final MarvelCharacters characters = Provider.of<MarvelCharacters>(context, listen: false);
+        characters.currentHeroId = characters.currentTabulationId;
+
+        if (kIsWeb) {
+          uh.window.removeEventListener('keydown', _keydownEventListener);
+        }
+
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (BuildContext context) => MarvelHeroScreen(widget._apiBaseUrl, PageController(initialPage: characters.currentHeroId), widget._client, _keydownEventListener),
+        ));
+
+        event.preventDefault();
       }
-
-      _scrollController.animateTo(
-        _scrollController.offset + _scrollController.position.viewportDimension,
-        duration: Duration(milliseconds: 500),
-        curve: Curves.ease,
-      );
-
-      event.preventDefault();
-    } else if (event.code == 'ArrowUp' && !_isScrolling) {
-      _scrollController.animateTo(
-        _scrollController.offset < _scrollController.position.viewportDimension ? 0 : _scrollController.offset - _scrollController.position.viewportDimension,
-        duration: Duration(milliseconds: 500),
-        curve: Curves.ease,
-      );
-
-      event.preventDefault();
-    } else if (event.code == 'Tab') {
-      Provider.of<MarvelCharacters>(context, listen: false).currentTabulationId += event.shiftKey ? -1 : 1;
-
-      _scrollController.scrollToIndex(
-        Provider.of<MarvelCharacters>(context, listen: false).currentTabulationId,
-        preferPosition: AutoScrollPosition.begin,
-      );
-
-      event.preventDefault();
-    } else if (event.code == 'Space' || event.code == 'Enter') {
-      final MarvelCharacters characters = Provider.of<MarvelCharacters>(context, listen: false);
-      characters.currentHeroId = characters.currentTabulationId;
-
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (BuildContext context) => MarvelHeroScreen(widget._apiBaseUrl, PageController(initialPage: characters.currentHeroId), widget._client),
-      ));
-
-      event.preventDefault();
     }
   }
 }
