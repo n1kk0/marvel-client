@@ -6,7 +6,7 @@ metadata:
   namespace: marvel
 spec:
   secretName: marvel-client-cert
-  commonName: marveel.techmeup.io
+  commonName: marvel.techmeup.io
   dnsNames:
   - marvel.techmeup.io
   issuerRef:
