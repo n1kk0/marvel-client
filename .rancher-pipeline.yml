@@ -1,0 +1,30 @@
+stages:
+- name: build
+  steps:
+  - runScriptConfig:
+      image: cirrusci/flutter:dev-web
+      shellScript: |
+        flutter config --enable-web
+        sudo chown -R cirrus:cirrus ./
+        mv lib/main_prod.dart lib/main.dart
+        flutter pub get
+        flutter build web
+- name: publish
+  steps:
+  - publishImageConfig:
+      dockerfilePath: ./container/Dockerfile
+      buildContext: .
+      tag: admin:${CICD_EXECUTION_SEQUENCE}
+- name: deploy
+  steps:
+  - applyYamlConfig:
+      path: ./container/deployment.yaml
+timeout: 60
+notification:
+  recipients:
+  - recipient: '#infra'
+    notifier: c-55nms:n-n5knt
+  condition:
+  - Success
+  - Changed
+  - Failed

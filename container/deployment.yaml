@@ -1,0 +1,76 @@
+---
+kind: Certificate
+apiVersion: cert-manager.io/v1alpha2
+metadata:
+  name: marvel-client-cert
+  namespace: marvel
+spec:
+  secretName: marvel-client-cert
+  commonName: marveel.techmeup.io
+  dnsNames:
+  - marvel.techmeup.io
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+---
+kind: Ingress
+apiVersion: extensions/v1beta1
+metadata:
+  name: marvel-client-ingress
+  namespace: marvel
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+    kubernetes.io/tls-acme: "'true'"
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+  - host: marvel.techmeup.io
+    http:
+      paths:
+      - backend:
+          serviceName: marvel-client-service
+          servicePort: 80
+  tls:
+  - hosts:
+    - marvel.techmeup.io
+    secretName: marvel-client-cert
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: marvel-client-service
+  namespace: marvel
+spec:
+  selector:
+    app: marvel-client
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+    protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: marvel-client
+  namespace: marvel
+  labels:
+    app: marvel-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: marvel-client
+  template:
+    metadata:
+      labels:
+        app: marvel-client
+    spec:
+      imagePullSecrets:
+      - name: pipeline-docker-registry
+      containers:
+      - name: marvel-client
+        image: ${CICD_IMAGE}:${CICD_EXECUTION_SEQUENCE}
+        ports:
+        - containerPort: 80
