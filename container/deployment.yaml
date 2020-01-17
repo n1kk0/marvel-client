@@ -41,6 +41,10 @@ metadata:
   name: marvel-client-service
   namespace: marvel
 spec:
+  template:
+    metadata:
+      labels:
+        app: marvel-client
   selector:
     app: marvel-client
   type: ClusterIP
