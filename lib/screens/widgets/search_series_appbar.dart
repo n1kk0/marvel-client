@@ -45,14 +45,14 @@ class _SearchSeriesAppBarState extends State<SearchSeriesAppBar>{
         TypeAheadField<MarvelSeries>(
           textFieldConfiguration: TextFieldConfiguration(
             controller: widget.seriesTypeAheadController,
-            style: TextStyle(color: Theme.of(context).primaryTextTheme.bodyText2.color, fontSize: 16, fontWeight: FontWeight.bold),
+            style: TextStyle(color: Theme.of(context).primaryTextTheme.body1.color, fontSize: 16, fontWeight: FontWeight.bold),
             autofocus: true,
-            cursorColor: Theme.of(context).primaryTextTheme.bodyText2.color,
+            cursorColor: Theme.of(context).primaryTextTheme.body1.color,
             decoration: InputDecoration(
               labelText: 'Search by Comic Series Title',
-              counterStyle: TextStyle(color: Theme.of(context).primaryTextTheme.bodyText2.color, fontSize: 10),
-              fillColor: Theme.of(context).primaryTextTheme.bodyText2.color,
-              labelStyle: TextStyle(color: Theme.of(context).primaryTextTheme.bodyText2.color),
+              counterStyle: TextStyle(color: Theme.of(context).primaryTextTheme.body1.color, fontSize: 10),
+              fillColor: Theme.of(context).primaryTextTheme.body1.color,
+              labelStyle: TextStyle(color: Theme.of(context).primaryTextTheme.body1.color),
             ),
           ),
           suggestionsCallback: (pattern) async => pattern != "" ? await ApiService(widget.apiBaseUrl, widget.client).getMarvelSeries(pattern) : [],

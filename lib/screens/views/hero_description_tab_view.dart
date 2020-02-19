@@ -47,9 +47,9 @@ class HeroDescriptionTabView extends StatelessWidget {
       color: Colors.red,
       child: Row(
         children: <Widget>[
-          Text(label, style: TextStyle(color: Theme.of(context).primaryTextTheme.bodyText2.color, fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(label, style: TextStyle(color: Theme.of(context).primaryTextTheme.body1.color, fontSize: 16, fontWeight: FontWeight.bold)),
           Padding(padding: EdgeInsets.all(5)),
-          Icon(Icons.open_in_new, color: Theme.of(context).primaryTextTheme.bodyText2.color, size: 16),
+          Icon(Icons.open_in_new, color: Theme.of(context).primaryTextTheme.body1.color, size: 16),
         ],
       ),
       onPressed: () async {
