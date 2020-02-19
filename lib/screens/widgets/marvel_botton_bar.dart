@@ -13,7 +13,7 @@ class MarvelBottomAppBar extends StatelessWidget {
       child: GestureDetector(
         child: Padding(
           padding: const EdgeInsets.all(5.0),
-          child: Text("Data provided by Marvel. © 2014 Marvel", textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).primaryTextTheme.bodyText1.color, fontSize: 10, fontWeight: FontWeight.bold, decoration: TextDecoration.underline)),
+          child: Text("Data provided by Marvel. © 2014 Marvel", textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).primaryTextTheme.bodyText2.color, fontSize: 10, fontWeight: FontWeight.bold, decoration: TextDecoration.underline)),
         ),
         onTap: () async {
           if (kIsWeb) {
