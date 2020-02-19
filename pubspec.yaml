@@ -40,9 +40,9 @@ flutter:
   fonts:
     - family: HelveticaNeue
       fonts:
-        - asset: fonts/HelveticaNeue/HelveticaNeue-Regular.ttf
-        - asset: fonts/HelveticaNeue/HelveticaNeue-Bold.ttf
+        - asset: assets/fonts/HelveticaNeue/HelveticaNeue-Regular.ttf
+        - asset: assets/fonts/HelveticaNeue/HelveticaNeue-Bold.ttf
           weight: 700
     - family: MaterialIcons
       fonts:
-        - asset: fonts/MaterialIcons/MaterialIcons-Regular.ttf
+        - asset: assets/fonts/MaterialIcons/MaterialIcons-Regular.ttf
