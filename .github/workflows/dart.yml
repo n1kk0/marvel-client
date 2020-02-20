@@ -8,13 +8,13 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image:  cirrusci/flutter:dev-web
+      image:  cirrusci/flutter
 
     steps:
-    - uses: actions/checkout@v2
     - name: Change source files ownership
       run: sudo chown -R cirrus:cirrus ./
+    - uses: actions/checkout@v2
     - name: Install dependencies
-      run: flutter pub get
+      run: sudo /home/cirrus/sdks/flutter/bin/flutter pub get
     - name: Run tests
       run: pub run test
