@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 
-import 'package:marvel_client/tools/app_consts.dart';
+import 'package:marvel_client/conf/app_consts.dart';
 import 'package:marvel_client/data/sources/marvel_api.dart';
 import 'package:marvel_client/data/models/marvel_character.dart';
 

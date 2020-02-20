@@ -11,3 +11,13 @@ Install the API Proxy: https://github.com/n1kk0/marvel_proxy
 
 ### Run
 Then use VS.Code with the `.vscode` directory configuration.
+
+### Architecture
+* data
+  * sources: APIs, device I/Os, AuthProviders, ...
+  * models: domain models objects
+  * providers: view models with state
+* ui
+  * screens: Web pages
+  * views: composite UI contents
+  * widgets: unit elements of UI

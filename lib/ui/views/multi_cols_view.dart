@@ -6,7 +6,7 @@ import 'package:universal_html/html.dart' as uh;
 
 import 'package:marvel_client/data/providers/marvel_characters.dart';
 import 'package:marvel_client/data/models/marvel_character.dart';
-import 'package:marvel_client/screens/marvel_hero_screen.dart';
+import 'package:marvel_client/ui/screens/marvel_hero_screen.dart';
 
 class MultiColsView extends StatelessWidget {
   final ScrollController _scrollController;

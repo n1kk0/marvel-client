@@ -6,9 +6,9 @@ import 'package:provider/provider.dart';
 import 'package:universal_html/html.dart' as uh;
 
 import 'package:marvel_client/data/providers/marvel_characters.dart';
-import 'package:marvel_client/screens/views/hero_home_tab_view.dart';
-import 'package:marvel_client/screens/views/hero_description_tab_view.dart';
-import 'package:marvel_client/screens/views/hero_list_tab_view.dart';
+import 'package:marvel_client/ui/views/hero_home_tab_view.dart';
+import 'package:marvel_client/ui/views/hero_description_tab_view.dart';
+import 'package:marvel_client/ui/views/hero_list_tab_view.dart';
 
 class MarvelHeroScreen extends StatefulWidget {
   final String _apiBaseUrl;

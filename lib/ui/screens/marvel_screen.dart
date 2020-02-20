@@ -5,14 +5,14 @@ import 'package:provider/provider.dart';
 import 'package:universal_html/html.dart' as uh;
 import 'package:scroll_to_index/scroll_to_index.dart';
 
-import 'package:marvel_client/tools/app_consts.dart';
+import 'package:marvel_client/conf/app_consts.dart';
 import 'package:marvel_client/data/providers/marvel_characters.dart';
 import 'package:marvel_client/data/models/marvel_series.dart';
-import 'package:marvel_client/screens/marvel_hero_screen.dart';
-import 'package:marvel_client/screens/views/one_col_view.dart';
-import 'package:marvel_client/screens/views/multi_cols_view.dart';
-import 'package:marvel_client/screens/widgets/search_series_appbar.dart';
-import 'package:marvel_client/screens/widgets/marvel_botton_bar.dart';
+import 'package:marvel_client/ui/screens/marvel_hero_screen.dart';
+import 'package:marvel_client/ui/views/one_col_view.dart';
+import 'package:marvel_client/ui/views/multi_cols_view.dart';
+import 'package:marvel_client/ui/widgets/search_series_appbar.dart';
+import 'package:marvel_client/ui/widgets/marvel_botton_bar.dart';
 
 class MarvelScreen extends StatefulWidget {
   final Client _client;
@@ -55,8 +55,8 @@ class _MarvelScreenState extends State<MarvelScreen> {
           _searchFilterActive = !_searchFilterActive;
 
           if (!_searchFilterActive) {
-            _seriesTypeAheadController.text = "";
-            Provider.of<MarvelCharacters>(context,listen: false).marvelSeriesFilterId = null;
+            _seriesTypeAheadController.text = '';
+            Provider.of<MarvelCharacters>(context, listen: false).marvelSeriesFilterId = null;
             _scrollController.jumpTo(0);
             _loadPageInitialMaxScrollExtent = 0;
             _initPageLoading();
@@ -66,7 +66,7 @@ class _MarvelScreenState extends State<MarvelScreen> {
         },
         onSuggestionSelected: (MarvelSeries marvelSeries) {
           _seriesTypeAheadController.text = marvelSeries.title;
-          Provider.of<MarvelCharacters>(context,listen: false).marvelSeriesFilterId = marvelSeries.id;
+          Provider.of<MarvelCharacters>(context, listen: false).marvelSeriesFilterId = marvelSeries.id;
           _scrollController.jumpTo(0);
           _loadPageInitialMaxScrollExtent = 0;
           _initPageLoading();
