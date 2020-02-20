@@ -1,4 +1,4 @@
-name: Dart CI
+name: Flutter
 
 on: [push]
 
@@ -8,11 +8,11 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image:  google/dart:latest
+      image:  cirrusci/flutter:dev-web
 
     steps:
     - uses: actions/checkout@v2
     - name: Install dependencies
-      run: pub get
+      run: flutter pub get
     - name: Run tests
       run: pub run test
