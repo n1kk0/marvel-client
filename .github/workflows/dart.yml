@@ -12,6 +12,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Change source files ownership
+      run: sudo chown -R cirrus:cirrus ./
     - name: Install dependencies
       run: flutter pub get
     - name: Run tests
