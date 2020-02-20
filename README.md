@@ -1,4 +1,6 @@
 # marvel_client
+![Flutter Tests](https://github.com/n1kk0/marvel-client/workflows/Flutter/badge.svg)
+
 ## Production envrironment
 https://marvel.techmeup.io
 
